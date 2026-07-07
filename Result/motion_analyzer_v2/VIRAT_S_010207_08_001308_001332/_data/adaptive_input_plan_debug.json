@@ -1,0 +1,7 @@
+{
+  "final_motion_type": "background_motion",
+  "reason": "valid motion tubes are weak or absent",
+  "num_roi_inputs": 0,
+  "roi_source": "none",
+  "sparse_global_count": 5
+}

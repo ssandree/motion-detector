@@ -1,0 +1,25 @@
+{
+  "motion_type": "background_motion",
+  "confidence": 0.6,
+  "primary_reason": "valid motion tubes are weak or absent",
+  "all_candidates": [
+    {
+      "motion_type": "background_motion",
+      "score": 0.6,
+      "reason": "valid motion tubes are weak or absent"
+    }
+  ],
+  "features_used": {
+    "global_motion_level": 0.028838,
+    "motion_area_mean": 0.16498,
+    "local_motion_importance_ratio": 0.0,
+    "multi_motion_score": 1.0,
+    "scene_change_count": 5,
+    "mean_global_motion_score": 0.549259,
+    "mean_residual_motion_area": 0.043907,
+    "camera_motion_frame_ratio": 0.835294,
+    "strong_tube_count": 2,
+    "max_tube_importance": 0.775,
+    "mean_motion_concentration": 0.331113
+  }
+}

@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env
+*.log
+
+# Model weights (downloaded on first YOLO run via ultralytics)
+*.pt
+
+# Pipeline caches and heavy generated artifacts
+Result/**/_cache/
+Result/**/*.npz
+Result/**/*.mp4
+Result/**/adaptive_input/
+Result/**/batch_summary*.json
+ground_truth/overlays/
+
+# IDE / OS
+.idea/
+.vscode/
+.cursor/
+.DS_Store
+Thumbs.db

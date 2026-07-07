@@ -1,0 +1,1229 @@
+{
+  "roi_source": "adaptive_input_plan.json",
+  "motion_type": "background_motion",
+  "num_roi_tracks": 0,
+  "background_flow_region_count": 0,
+  "selected_roi_tracks_summary": [],
+  "timeline": [
+    {
+      "frame_idx": 5,
+      "timestamp_sec": 0.2086,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            0,
+            0,
+            1280,
+            720
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.0
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 10,
+      "timestamp_sec": 0.4172,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            576,
+            396,
+            640,
+            432
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.97
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 15,
+      "timestamp_sec": 0.6258,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 20,
+      "timestamp_sec": 0.8344,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 25,
+      "timestamp_sec": 1.043,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 30,
+      "timestamp_sec": 1.2516,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 35,
+      "timestamp_sec": 1.4602,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 40,
+      "timestamp_sec": 1.6688,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 45,
+      "timestamp_sec": 1.8773,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 50,
+      "timestamp_sec": 2.0859,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 55,
+      "timestamp_sec": 2.2945,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 60,
+      "timestamp_sec": 2.5031,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            640,
+            396,
+            704,
+            432
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.939
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 65,
+      "timestamp_sec": 2.7117,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 70,
+      "timestamp_sec": 2.9203,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 75,
+      "timestamp_sec": 3.1289,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 80,
+      "timestamp_sec": 3.3375,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 85,
+      "timestamp_sec": 3.5461,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 90,
+      "timestamp_sec": 3.7547,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 95,
+      "timestamp_sec": 3.9633,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 100,
+      "timestamp_sec": 4.1719,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 105,
+      "timestamp_sec": 4.3805,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 110,
+      "timestamp_sec": 4.5891,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 115,
+      "timestamp_sec": 4.7977,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 120,
+      "timestamp_sec": 5.0063,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 125,
+      "timestamp_sec": 5.2149,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 130,
+      "timestamp_sec": 5.4234,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 135,
+      "timestamp_sec": 5.632,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 140,
+      "timestamp_sec": 5.8406,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 145,
+      "timestamp_sec": 6.0492,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 150,
+      "timestamp_sec": 6.2578,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 155,
+      "timestamp_sec": 6.4664,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 160,
+      "timestamp_sec": 6.675,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 165,
+      "timestamp_sec": 6.8836,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 170,
+      "timestamp_sec": 7.0922,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 175,
+      "timestamp_sec": 7.3008,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 180,
+      "timestamp_sec": 7.5094,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 185,
+      "timestamp_sec": 7.718,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 190,
+      "timestamp_sec": 7.9266,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 195,
+      "timestamp_sec": 8.1352,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            0,
+            288,
+            64,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.8918
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 200,
+      "timestamp_sec": 8.3438,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            0,
+            288,
+            64,
+            360
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7463
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 205,
+      "timestamp_sec": 8.5524,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 210,
+      "timestamp_sec": 8.761,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            0,
+            288,
+            64,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7973
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 215,
+      "timestamp_sec": 8.9695,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            0,
+            288,
+            64,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.9672
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 220,
+      "timestamp_sec": 9.1781,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 225,
+      "timestamp_sec": 9.3867,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            0,
+            288,
+            128,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7057
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 230,
+      "timestamp_sec": 9.5953,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            64,
+            252,
+            128,
+            288
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7591
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 235,
+      "timestamp_sec": 9.8039,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            64,
+            252,
+            128,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6253
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 240,
+      "timestamp_sec": 10.0125,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            64,
+            252,
+            128,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7055
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 245,
+      "timestamp_sec": 10.2211,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            64,
+            252,
+            128,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.659
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 250,
+      "timestamp_sec": 10.4297,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 255,
+      "timestamp_sec": 10.6383,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            252,
+            192,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.4874
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 260,
+      "timestamp_sec": 10.8469,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            252,
+            192,
+            288
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.5204
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 265,
+      "timestamp_sec": 11.0555,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            64,
+            252,
+            192,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6553
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 270,
+      "timestamp_sec": 11.2641,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            252,
+            192,
+            288
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6104
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 275,
+      "timestamp_sec": 11.4727,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            252,
+            192,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.8491
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 280,
+      "timestamp_sec": 11.6813,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            252,
+            192,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.66
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 285,
+      "timestamp_sec": 11.8899,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            288,
+            192,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.5657
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 290,
+      "timestamp_sec": 12.0985,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            252,
+            192,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7008
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 295,
+      "timestamp_sec": 12.3071,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            128,
+            288,
+            256,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.5985
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 300,
+      "timestamp_sec": 12.5156,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            192,
+            252,
+            256,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6826
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 305,
+      "timestamp_sec": 12.7242,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            192,
+            252,
+            256,
+            360
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.8141
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 310,
+      "timestamp_sec": 12.9328,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            192,
+            252,
+            256,
+            360
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7957
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 315,
+      "timestamp_sec": 13.1414,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            192,
+            288,
+            256,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7711
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 320,
+      "timestamp_sec": 13.35,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            192,
+            324,
+            256,
+            360
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6665
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 325,
+      "timestamp_sec": 13.5586,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            192,
+            288,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6657
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 330,
+      "timestamp_sec": 13.7672,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 335,
+      "timestamp_sec": 13.9758,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            288,
+            320,
+            360
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.8175
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 340,
+      "timestamp_sec": 14.1844,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            360
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.658
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 345,
+      "timestamp_sec": 14.393,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            288,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.9482
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 350,
+      "timestamp_sec": 14.6016,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            288,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6662
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 355,
+      "timestamp_sec": 14.8102,
+      "raw_blobs": [],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 360,
+      "timestamp_sec": 15.0188,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            288,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6196
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 365,
+      "timestamp_sec": 15.2274,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            288
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6619
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 370,
+      "timestamp_sec": 15.436,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            384,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7189
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 375,
+      "timestamp_sec": 15.6446,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            288
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.9319
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 380,
+      "timestamp_sec": 15.8531,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            288
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.5281
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 385,
+      "timestamp_sec": 16.0617,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            384,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.5719
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 390,
+      "timestamp_sec": 16.2703,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            288
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.4985
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 395,
+      "timestamp_sec": 16.4789,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            288,
+            384,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7114
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 400,
+      "timestamp_sec": 16.6875,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            384,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.4647
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 405,
+      "timestamp_sec": 16.8961,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.4905
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 410,
+      "timestamp_sec": 17.1047,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.5672
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 415,
+      "timestamp_sec": 17.3133,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            216,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.66
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 420,
+      "timestamp_sec": 17.5219,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            252,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.7099
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    },
+    {
+      "frame_idx": 425,
+      "timestamp_sec": 17.7305,
+      "raw_blobs": [
+        {
+          "blob_id_in_frame": 0,
+          "bbox": [
+            256,
+            288,
+            320,
+            324
+          ],
+          "blob_importance": 0.3,
+          "flow_direction_coherence": 0.6733
+        }
+      ],
+      "grouped_blobs": [],
+      "selected_roi_tracks": [],
+      "has_final_roi": false
+    }
+  ]
+}

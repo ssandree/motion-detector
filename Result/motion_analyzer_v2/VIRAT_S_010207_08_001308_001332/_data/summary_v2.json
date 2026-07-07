@@ -1,0 +1,25 @@
+{
+  "stage": "v2-bytetrack-motion-first",
+  "video_name": "VIRAT_S_010207_08_001308_001332",
+  "status": "ok",
+  "tracker": "bytetrack",
+  "num_tracks": 40,
+  "num_moving_tracks": 3,
+  "num_stationary_tracks": 0,
+  "num_fallback_tubes": 1,
+  "motion_type": "background_motion",
+  "elapsed_sec": 7.42,
+  "outputs": {
+    "object_tracks": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\object_tracks.csv",
+    "object_track_motion_features": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\object_track_motion_features.csv",
+    "moving_object_tracks": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\moving_object_tracks.csv",
+    "stationary_object_tracks": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\stationary_object_tracks.csv",
+    "motion_fallback_tubes": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\motion_fallback_tubes.csv",
+    "adaptive_input_plan": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\adaptive_input_plan.json",
+    "debug_roi_timeline": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\debug_roi_timeline.json",
+    "tracker_motion_overlay": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\tracker_motion_overlay.mp4",
+    "input_plan_overlay": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\input_plan_overlay.mp4",
+    "motion_blobs_overlay": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\motion_blobs_overlay.mp4",
+    "video_summary": "Result\\motion_analyzer_v2\\VIRAT_S_010207_08_001308_001332\\_data\\video_summary.md"
+  }
+}

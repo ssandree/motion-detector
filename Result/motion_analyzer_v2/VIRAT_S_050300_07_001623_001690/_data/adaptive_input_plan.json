@@ -1,0 +1,1886 @@
+{
+  "version": "v2-bytetrack-motion-first",
+  "category": "Multi-motion / Competing Blobs",
+  "strategy": [
+    "ByteTrack ID continuity for object tracks",
+    "motion map primary evidence; detector_only tracks excluded from ROI",
+    "motion_fallback_tube for detector misses"
+  ],
+  "sparse_global_fps": 0.25,
+  "estimated_total_frame_count": 48,
+  "estimated_crop_count": 31,
+  "entries_by_source": {
+    "sparse_global": 17,
+    "moving_object_track": 23,
+    "motion_fallback_tube": 8
+  },
+  "top_moving_tracks": [
+    {
+      "track_id": 498,
+      "class_name": "car",
+      "track_motion_importance": 0.851424,
+      "observed_motion_ratio": 0.933333,
+      "num_observed_motion_frames": 14,
+      "normalized_track_displacement": 0.140169,
+      "track_state": "moving_vehicle"
+    },
+    {
+      "track_id": 447,
+      "class_name": "car",
+      "track_motion_importance": 0.761186,
+      "observed_motion_ratio": 0.666667,
+      "num_observed_motion_frames": 4,
+      "normalized_track_displacement": 0.056046,
+      "track_state": "moving_vehicle"
+    },
+    {
+      "track_id": 538,
+      "class_name": "car",
+      "track_motion_importance": 0.724794,
+      "observed_motion_ratio": 0.636364,
+      "num_observed_motion_frames": 14,
+      "normalized_track_displacement": 0.163619,
+      "track_state": "moving_vehicle"
+    },
+    {
+      "track_id": 733,
+      "class_name": "car",
+      "track_motion_importance": 0.71147,
+      "observed_motion_ratio": 0.5,
+      "num_observed_motion_frames": 7,
+      "normalized_track_displacement": 0.104435,
+      "track_state": "moving_vehicle"
+    },
+    {
+      "track_id": 70,
+      "class_name": "car",
+      "track_motion_importance": 0.696835,
+      "observed_motion_ratio": 0.5,
+      "num_observed_motion_frames": 2,
+      "normalized_track_displacement": 0.064581,
+      "track_state": "moving_vehicle"
+    }
+  ],
+  "fallback_tubes": [
+    {
+      "motion_tube_id": 12
+    },
+    {
+      "motion_tube_id": 20
+    },
+    {
+      "motion_tube_id": 24
+    }
+  ],
+  "frames": [
+    {
+      "frame_idx": 6,
+      "timestamp_sec": 0.2002,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 108,
+      "timestamp_sec": 3.6036,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 70,
+      "class_name": "car",
+      "motion_bbox": [
+        1152,
+        216,
+        1440,
+        378
+      ],
+      "track_bbox": [
+        1278,
+        302,
+        1335,
+        348
+      ],
+      "crop_bbox": [
+        1094,
+        183,
+        1497,
+        410
+      ],
+      "importance": 0.696835
+    },
+    {
+      "frame_idx": 126,
+      "timestamp_sec": 4.2042,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 198,
+      "timestamp_sec": 6.6066,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 70,
+      "class_name": "car",
+      "motion_bbox": [
+        1248,
+        270,
+        1536,
+        432
+      ],
+      "track_bbox": [
+        1397,
+        377,
+        1457,
+        425
+      ],
+      "crop_bbox": [
+        1190,
+        237,
+        1593,
+        464
+      ],
+      "importance": 0.696835
+    },
+    {
+      "frame_idx": 246,
+      "timestamp_sec": 8.2082,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 366,
+      "timestamp_sec": 12.2122,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 486,
+      "timestamp_sec": 16.2162,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 594,
+      "timestamp_sec": 19.8198,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 447,
+      "class_name": "car",
+      "motion_bbox": [
+        1344,
+        324,
+        1824,
+        648
+      ],
+      "track_bbox": [
+        1494,
+        426,
+        1585,
+        488
+      ],
+      "crop_bbox": [
+        1248,
+        259,
+        1920,
+        712
+      ],
+      "importance": 0.761186
+    },
+    {
+      "frame_idx": 606,
+      "timestamp_sec": 20.2202,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 624,
+      "timestamp_sec": 20.8208,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 447,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        378,
+        1920,
+        702
+      ],
+      "track_bbox": [
+        1598,
+        487,
+        1694,
+        552
+      ],
+      "crop_bbox": [
+        1344,
+        313,
+        1920,
+        766
+      ],
+      "importance": 0.761186
+    },
+    {
+      "frame_idx": 678,
+      "timestamp_sec": 22.6226,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 12,
+      "motion_bbox": [
+        1824,
+        972,
+        1920,
+        1026
+      ],
+      "crop_bbox": [
+        1776,
+        945,
+        1920,
+        1053
+      ],
+      "importance": 0.676786
+    },
+    {
+      "frame_idx": 708,
+      "timestamp_sec": 23.6236,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        378,
+        1632,
+        540
+      ],
+      "track_bbox": [
+        1515,
+        402,
+        1581,
+        447
+      ],
+      "crop_bbox": [
+        1491,
+        345,
+        1655,
+        572
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 714,
+      "timestamp_sec": 23.8238,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        378,
+        1632,
+        540
+      ],
+      "track_bbox": [
+        1525,
+        404,
+        1598,
+        455
+      ],
+      "crop_bbox": [
+        1503,
+        345,
+        1653,
+        572
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 720,
+      "timestamp_sec": 24.024,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        378,
+        1728,
+        594
+      ],
+      "track_bbox": [
+        1542,
+        415,
+        1619,
+        467
+      ],
+      "crop_bbox": [
+        1497,
+        334,
+        1766,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 726,
+      "timestamp_sec": 24.2242,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        378,
+        1728,
+        594
+      ],
+      "track_bbox": [
+        1560,
+        424,
+        1641,
+        478
+      ],
+      "crop_bbox": [
+        1497,
+        334,
+        1766,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 726,
+      "timestamp_sec": 24.2242,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 732,
+      "timestamp_sec": 24.4244,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        378,
+        1728,
+        594
+      ],
+      "track_bbox": [
+        1582,
+        439,
+        1659,
+        491
+      ],
+      "crop_bbox": [
+        1497,
+        334,
+        1766,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 738,
+      "timestamp_sec": 24.6246,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        432,
+        1728,
+        594
+      ],
+      "track_bbox": [
+        1598,
+        447,
+        1676,
+        500
+      ],
+      "crop_bbox": [
+        1497,
+        399,
+        1766,
+        626
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 744,
+      "timestamp_sec": 24.8248,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        378,
+        1728,
+        594
+      ],
+      "track_bbox": [
+        1618,
+        456,
+        1706,
+        515
+      ],
+      "crop_bbox": [
+        1382,
+        334,
+        1785,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 750,
+      "timestamp_sec": 25.025,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        378,
+        1728,
+        594
+      ],
+      "track_bbox": [
+        1639,
+        466,
+        1730,
+        526
+      ],
+      "crop_bbox": [
+        1382,
+        334,
+        1788,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 756,
+      "timestamp_sec": 25.2252,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        378,
+        1824,
+        594
+      ],
+      "track_bbox": [
+        1656,
+        475,
+        1752,
+        538
+      ],
+      "crop_bbox": [
+        1363,
+        334,
+        1900,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 762,
+      "timestamp_sec": 25.4254,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        378,
+        1824,
+        594
+      ],
+      "track_bbox": [
+        1675,
+        482,
+        1775,
+        549
+      ],
+      "crop_bbox": [
+        1363,
+        334,
+        1900,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 774,
+      "timestamp_sec": 25.8258,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 538,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        378,
+        1824,
+        594
+      ],
+      "track_bbox": [
+        1525,
+        406,
+        1608,
+        463
+      ],
+      "crop_bbox": [
+        1363,
+        334,
+        1900,
+        637
+      ],
+      "importance": 0.724794
+    },
+    {
+      "frame_idx": 774,
+      "timestamp_sec": 25.8258,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        378,
+        1824,
+        594
+      ],
+      "track_bbox": [
+        1719,
+        504,
+        1819,
+        570
+      ],
+      "crop_bbox": [
+        1363,
+        334,
+        1900,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 780,
+      "timestamp_sec": 26.026,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1728,
+        486,
+        1920,
+        594
+      ],
+      "track_bbox": [
+        1738,
+        512,
+        1840,
+        579
+      ],
+      "crop_bbox": [
+        1689,
+        464,
+        1920,
+        615
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 786,
+      "timestamp_sec": 26.2262,
+      "type": "roi_crop_dense",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        378,
+        1920,
+        594
+      ],
+      "track_bbox": [
+        1754,
+        521,
+        1859,
+        589
+      ],
+      "crop_bbox": [
+        1459,
+        334,
+        1920,
+        637
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 792,
+      "timestamp_sec": 26.4264,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 498,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        378,
+        1920,
+        594
+      ],
+      "track_bbox": [
+        1772,
+        531,
+        1875,
+        598
+      ],
+      "crop_bbox": [
+        1459,
+        334,
+        1920,
+        642
+      ],
+      "importance": 0.851424
+    },
+    {
+      "frame_idx": 798,
+      "timestamp_sec": 26.6266,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 538,
+      "class_name": "car",
+      "motion_bbox": [
+        1536,
+        432,
+        1920,
+        648
+      ],
+      "track_bbox": [
+        1595,
+        442,
+        1683,
+        502
+      ],
+      "crop_bbox": [
+        1459,
+        388,
+        1920,
+        691
+      ],
+      "importance": 0.724794
+    },
+    {
+      "frame_idx": 816,
+      "timestamp_sec": 27.2272,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 12,
+      "motion_bbox": [
+        1440,
+        864,
+        1536,
+        972
+      ],
+      "crop_bbox": [
+        1392,
+        810,
+        1584,
+        1026
+      ],
+      "importance": 0.676786
+    },
+    {
+      "frame_idx": 846,
+      "timestamp_sec": 28.2282,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 882,
+      "timestamp_sec": 29.4294,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 538,
+      "class_name": "car",
+      "motion_bbox": [
+        1728,
+        486,
+        1920,
+        648
+      ],
+      "track_bbox": [
+        1774,
+        537,
+        1882,
+        606
+      ],
+      "crop_bbox": [
+        1689,
+        453,
+        1920,
+        680
+      ],
+      "importance": 0.724794
+    },
+    {
+      "frame_idx": 948,
+      "timestamp_sec": 31.6316,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 12,
+      "motion_bbox": [
+        1152,
+        864,
+        1248,
+        918
+      ],
+      "crop_bbox": [
+        1104,
+        837,
+        1296,
+        945
+      ],
+      "importance": 0.676786
+    },
+    {
+      "frame_idx": 966,
+      "timestamp_sec": 32.2322,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1056,
+      "timestamp_sec": 35.2352,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 20,
+      "motion_bbox": [
+        1440,
+        324,
+        1632,
+        378
+      ],
+      "crop_bbox": [
+        1344,
+        297,
+        1728,
+        405
+      ],
+      "importance": 0.621679
+    },
+    {
+      "frame_idx": 1086,
+      "timestamp_sec": 36.2362,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1140,
+      "timestamp_sec": 38.038,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 733,
+      "class_name": "car",
+      "motion_bbox": [
+        1632,
+        378,
+        1920,
+        540
+      ],
+      "track_bbox": [
+        1610,
+        370,
+        1696,
+        423
+      ],
+      "crop_bbox": [
+        1548,
+        336,
+        1920,
+        574
+      ],
+      "importance": 0.71147
+    },
+    {
+      "frame_idx": 1182,
+      "timestamp_sec": 39.4394,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 733,
+      "class_name": "car",
+      "motion_bbox": [
+        1440,
+        324,
+        1728,
+        486
+      ],
+      "track_bbox": [
+        1503,
+        322,
+        1578,
+        369
+      ],
+      "crop_bbox": [
+        1382,
+        289,
+        1785,
+        518
+      ],
+      "importance": 0.71147
+    },
+    {
+      "frame_idx": 1206,
+      "timestamp_sec": 40.2402,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1284,
+      "timestamp_sec": 42.8428,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 20,
+      "motion_bbox": [
+        1152,
+        216,
+        1248,
+        270
+      ],
+      "crop_bbox": [
+        1104,
+        189,
+        1296,
+        297
+      ],
+      "importance": 0.621679
+    },
+    {
+      "frame_idx": 1314,
+      "timestamp_sec": 43.8438,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 24,
+      "motion_bbox": [
+        1440,
+        216,
+        1536,
+        270
+      ],
+      "crop_bbox": [
+        1392,
+        189,
+        1584,
+        297
+      ],
+      "importance": 0.613283
+    },
+    {
+      "frame_idx": 1326,
+      "timestamp_sec": 44.2442,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1446,
+      "timestamp_sec": 48.2482,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1566,
+      "timestamp_sec": 52.2522,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1674,
+      "timestamp_sec": 55.8558,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 24,
+      "motion_bbox": [
+        1248,
+        216,
+        1344,
+        270
+      ],
+      "crop_bbox": [
+        1200,
+        189,
+        1392,
+        297
+      ],
+      "importance": 0.613283
+    },
+    {
+      "frame_idx": 1686,
+      "timestamp_sec": 56.2562,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1710,
+      "timestamp_sec": 57.057,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 24,
+      "motion_bbox": [
+        1056,
+        216,
+        1152,
+        270
+      ],
+      "crop_bbox": [
+        1008,
+        189,
+        1200,
+        297
+      ],
+      "importance": 0.613283
+    },
+    {
+      "frame_idx": 1806,
+      "timestamp_sec": 60.2602,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 1926,
+      "timestamp_sec": 64.2642,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    }
+  ],
+  "motion_type": "event_motion",
+  "roi_inputs": [
+    {
+      "roi_id": 1,
+      "source": "blob_group",
+      "primary_source": "blob_group",
+      "group_id": 4,
+      "auxiliary_track_ids": [
+        1,
+        2,
+        3,
+        8,
+        357
+      ],
+      "source_track_ids": [],
+      "source_tube_ids": [],
+      "event_score": 0.641362,
+      "event_relevance_score": 1.7999,
+      "revised_event_score": 3.107535,
+      "motion_score": 0.9352,
+      "object_proximity_score": 1.0,
+      "interaction_score": 0.45,
+      "background_flow_penalty": 0.0787,
+      "motion_pattern": "event_motion",
+      "duration_sec": 10.6106,
+      "bbox_sequence_len": 54,
+      "bbox_sequence": [
+        {
+          "frame_idx": 654,
+          "timestamp_sec": 21.8218,
+          "bbox": [
+            638,
+            644,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 660,
+          "timestamp_sec": 22.022,
+          "bbox": [
+            638,
+            644,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 666,
+          "timestamp_sec": 22.2222,
+          "bbox": [
+            638,
+            644,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 672,
+          "timestamp_sec": 22.4224,
+          "bbox": [
+            638,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 678,
+          "timestamp_sec": 22.6226,
+          "bbox": [
+            638,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 684,
+          "timestamp_sec": 22.8228,
+          "bbox": [
+            637,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 690,
+          "timestamp_sec": 23.023,
+          "bbox": [
+            637,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 696,
+          "timestamp_sec": 23.2232,
+          "bbox": [
+            637,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 702,
+          "timestamp_sec": 23.4234,
+          "bbox": [
+            636,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 708,
+          "timestamp_sec": 23.6236,
+          "bbox": [
+            635,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 714,
+          "timestamp_sec": 23.8238,
+          "bbox": [
+            634,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 720,
+          "timestamp_sec": 24.024,
+          "bbox": [
+            633,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 726,
+          "timestamp_sec": 24.2242,
+          "bbox": [
+            632,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 732,
+          "timestamp_sec": 24.4244,
+          "bbox": [
+            631,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 738,
+          "timestamp_sec": 24.6246,
+          "bbox": [
+            630,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 744,
+          "timestamp_sec": 24.8248,
+          "bbox": [
+            629,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 750,
+          "timestamp_sec": 25.025,
+          "bbox": [
+            628,
+            646,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 756,
+          "timestamp_sec": 25.2252,
+          "bbox": [
+            627,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 762,
+          "timestamp_sec": 25.4254,
+          "bbox": [
+            627,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 768,
+          "timestamp_sec": 25.6256,
+          "bbox": [
+            627,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 774,
+          "timestamp_sec": 25.8258,
+          "bbox": [
+            627,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 780,
+          "timestamp_sec": 26.026,
+          "bbox": [
+            628,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 786,
+          "timestamp_sec": 26.2262,
+          "bbox": [
+            628,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 792,
+          "timestamp_sec": 26.4264,
+          "bbox": [
+            628,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 798,
+          "timestamp_sec": 26.6266,
+          "bbox": [
+            628,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 804,
+          "timestamp_sec": 26.8268,
+          "bbox": [
+            628,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 810,
+          "timestamp_sec": 27.027,
+          "bbox": [
+            629,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 816,
+          "timestamp_sec": 27.2272,
+          "bbox": [
+            630,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 822,
+          "timestamp_sec": 27.4274,
+          "bbox": [
+            630,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 828,
+          "timestamp_sec": 27.6276,
+          "bbox": [
+            630,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 834,
+          "timestamp_sec": 27.8278,
+          "bbox": [
+            630,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 840,
+          "timestamp_sec": 28.028,
+          "bbox": [
+            630,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 846,
+          "timestamp_sec": 28.2282,
+          "bbox": [
+            629,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 852,
+          "timestamp_sec": 28.4284,
+          "bbox": [
+            628,
+            644,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 858,
+          "timestamp_sec": 28.6286,
+          "bbox": [
+            627,
+            643,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 864,
+          "timestamp_sec": 28.8288,
+          "bbox": [
+            626,
+            642,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 870,
+          "timestamp_sec": 29.029,
+          "bbox": [
+            625,
+            641,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 876,
+          "timestamp_sec": 29.2292,
+          "bbox": [
+            625,
+            640,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 882,
+          "timestamp_sec": 29.4294,
+          "bbox": [
+            625,
+            640,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 888,
+          "timestamp_sec": 29.6296,
+          "bbox": [
+            624,
+            640,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 894,
+          "timestamp_sec": 29.8298,
+          "bbox": [
+            623,
+            640,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 900,
+          "timestamp_sec": 30.03,
+          "bbox": [
+            624,
+            645,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 906,
+          "timestamp_sec": 30.2302,
+          "bbox": [
+            626,
+            652,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 912,
+          "timestamp_sec": 30.4304,
+          "bbox": [
+            628,
+            660,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 918,
+          "timestamp_sec": 30.6306,
+          "bbox": [
+            630,
+            668,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 924,
+          "timestamp_sec": 30.8308,
+          "bbox": [
+            632,
+            675,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 930,
+          "timestamp_sec": 31.031,
+          "bbox": [
+            633,
+            681,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 936,
+          "timestamp_sec": 31.2312,
+          "bbox": [
+            633,
+            686,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 942,
+          "timestamp_sec": 31.4314,
+          "bbox": [
+            633,
+            690,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 948,
+          "timestamp_sec": 31.6316,
+          "bbox": [
+            633,
+            694,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 954,
+          "timestamp_sec": 31.8318,
+          "bbox": [
+            633,
+            697,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 960,
+          "timestamp_sec": 32.032,
+          "bbox": [
+            633,
+            699,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 966,
+          "timestamp_sec": 32.2322,
+          "bbox": [
+            633,
+            701,
+            1920,
+            1080
+          ]
+        },
+        {
+          "frame_idx": 972,
+          "timestamp_sec": 32.4324,
+          "bbox": [
+            633,
+            702,
+            1920,
+            1080
+          ]
+        }
+      ],
+      "start_sec": 21.8218,
+      "end_sec": 32.4324,
+      "start_frame_idx": 654,
+      "end_frame_idx": 972,
+      "selection_status": "selected",
+      "selection_reason": "long_persistent_priority",
+      "replacement_reason": ""
+    },
+    {
+      "roi_id": 2,
+      "source": "blob_group",
+      "primary_source": "blob_group",
+      "group_id": 5,
+      "auxiliary_track_ids": [],
+      "source_track_ids": [],
+      "source_tube_ids": [],
+      "event_score": 0.481934,
+      "event_relevance_score": 2.0466,
+      "revised_event_score": 2.466715,
+      "motion_score": 0.7864,
+      "object_proximity_score": 0.8158,
+      "interaction_score": 0.2368,
+      "background_flow_penalty": 0.0786,
+      "motion_pattern": "event_motion",
+      "duration_sec": 3.6036,
+      "bbox_sequence_len": 19,
+      "bbox_sequence": [
+        {
+          "frame_idx": 810,
+          "timestamp_sec": 27.027,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 816,
+          "timestamp_sec": 27.2272,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 822,
+          "timestamp_sec": 27.4274,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 828,
+          "timestamp_sec": 27.6276,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 834,
+          "timestamp_sec": 27.8278,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 840,
+          "timestamp_sec": 28.028,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 846,
+          "timestamp_sec": 28.2282,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 852,
+          "timestamp_sec": 28.4284,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 858,
+          "timestamp_sec": 28.6286,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 864,
+          "timestamp_sec": 28.8288,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 870,
+          "timestamp_sec": 29.029,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 876,
+          "timestamp_sec": 29.2292,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 882,
+          "timestamp_sec": 29.4294,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 888,
+          "timestamp_sec": 29.6296,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 894,
+          "timestamp_sec": 29.8298,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 900,
+          "timestamp_sec": 30.03,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 906,
+          "timestamp_sec": 30.2302,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 912,
+          "timestamp_sec": 30.4304,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        },
+        {
+          "frame_idx": 918,
+          "timestamp_sec": 30.6306,
+          "bbox": [
+            1019,
+            141,
+            1188,
+            236
+          ]
+        }
+      ],
+      "start_sec": 27.027,
+      "end_sec": 30.6306,
+      "start_frame_idx": 810,
+      "end_frame_idx": 918,
+      "selection_status": "selected",
+      "selection_reason": "revised_score_rank",
+      "replacement_reason": ""
+    }
+  ],
+  "roi_source": "blob_group",
+  "finalization": {
+    "final_motion_type": "event_motion",
+    "reason": "persistent valid motion tubes",
+    "num_roi_inputs": 2,
+    "roi_source": "blob_group",
+    "sparse_global_count": 17,
+    "num_candidates_by_pattern": {
+      "background_jitter": 0,
+      "background_flow": 0,
+      "transit_motion": 0,
+      "ambiguous_motion": 4,
+      "event_motion": 7
+    },
+    "selected_roi_count": 2,
+    "rejected_transit_count": 0,
+    "rejected_background_count": 0
+  }
+}

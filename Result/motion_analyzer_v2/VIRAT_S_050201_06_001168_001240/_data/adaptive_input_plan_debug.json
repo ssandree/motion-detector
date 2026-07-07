@@ -1,0 +1,17 @@
+{
+  "final_motion_type": "event_motion",
+  "reason": "persistent valid motion tubes",
+  "num_roi_inputs": 2,
+  "roi_source": "blob_group",
+  "sparse_global_count": 18,
+  "num_candidates_by_pattern": {
+    "background_jitter": 1,
+    "background_flow": 8,
+    "transit_motion": 1,
+    "ambiguous_motion": 42,
+    "event_motion": 31
+  },
+  "selected_roi_count": 2,
+  "rejected_transit_count": 1,
+  "rejected_background_count": 9
+}

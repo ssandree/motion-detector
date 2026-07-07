@@ -1,0 +1,571 @@
+{
+  "version": "v2-bytetrack-motion-first",
+  "category": "Scene Change Dominant",
+  "strategy": [
+    "ByteTrack ID continuity for object tracks",
+    "motion map primary evidence; detector_only tracks excluded from ROI",
+    "motion_fallback_tube for detector misses"
+  ],
+  "sparse_global_fps": 0.25,
+  "estimated_total_frame_count": 47,
+  "estimated_crop_count": 7,
+  "entries_by_source": {
+    "?": 35,
+    "sparse_global": 5,
+    "motion_fallback_tube": 3,
+    "moving_object_track": 4
+  },
+  "top_moving_tracks": [
+    {
+      "track_id": 9,
+      "class_name": "person",
+      "track_motion_importance": 0.7,
+      "observed_motion_ratio": 1.0,
+      "num_observed_motion_frames": 1,
+      "normalized_track_displacement": 0.0,
+      "track_state": "moving_person"
+    },
+    {
+      "track_id": 18,
+      "class_name": "person",
+      "track_motion_importance": 0.557328,
+      "observed_motion_ratio": 0.5,
+      "num_observed_motion_frames": 1,
+      "normalized_track_displacement": 0.002369,
+      "track_state": "moving_person"
+    },
+    {
+      "track_id": 23,
+      "class_name": "person",
+      "track_motion_importance": 0.5,
+      "observed_motion_ratio": 1.0,
+      "num_observed_motion_frames": 3,
+      "normalized_track_displacement": 0.013467,
+      "track_state": "moving_person"
+    }
+  ],
+  "fallback_tubes": [
+    {
+      "motion_tube_id": 1
+    }
+  ],
+  "frames": [
+    {
+      "frame_idx": 5,
+      "timestamp_sec": 0.2086,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.064774
+    },
+    {
+      "frame_idx": 5,
+      "timestamp_sec": 0.2086,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 10,
+      "timestamp_sec": 0.4172,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.064774
+    },
+    {
+      "frame_idx": 15,
+      "timestamp_sec": 0.6258,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.064774
+    },
+    {
+      "frame_idx": 85,
+      "timestamp_sec": 3.5461,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.056201
+    },
+    {
+      "frame_idx": 90,
+      "timestamp_sec": 3.7547,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.056201
+    },
+    {
+      "frame_idx": 95,
+      "timestamp_sec": 3.9633,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.056201
+    },
+    {
+      "frame_idx": 100,
+      "timestamp_sec": 4.1719,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.056201
+    },
+    {
+      "frame_idx": 105,
+      "timestamp_sec": 4.3805,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.056201
+    },
+    {
+      "frame_idx": 105,
+      "timestamp_sec": 4.3805,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 110,
+      "timestamp_sec": 4.5891,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.064352
+    },
+    {
+      "frame_idx": 120,
+      "timestamp_sec": 5.0063,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.062094
+    },
+    {
+      "frame_idx": 125,
+      "timestamp_sec": 5.2149,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.062094
+    },
+    {
+      "frame_idx": 130,
+      "timestamp_sec": 5.4234,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.062094
+    },
+    {
+      "frame_idx": 135,
+      "timestamp_sec": 5.632,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.062094
+    },
+    {
+      "frame_idx": 140,
+      "timestamp_sec": 5.8406,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.062094
+    },
+    {
+      "frame_idx": 145,
+      "timestamp_sec": 6.0492,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.055815
+    },
+    {
+      "frame_idx": 150,
+      "timestamp_sec": 6.2578,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.055815
+    },
+    {
+      "frame_idx": 155,
+      "timestamp_sec": 6.4664,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.055815
+    },
+    {
+      "frame_idx": 160,
+      "timestamp_sec": 6.675,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.055815
+    },
+    {
+      "frame_idx": 165,
+      "timestamp_sec": 6.8836,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.055815
+    },
+    {
+      "frame_idx": 170,
+      "timestamp_sec": 7.0922,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.061572
+    },
+    {
+      "frame_idx": 175,
+      "timestamp_sec": 7.3008,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.061572
+    },
+    {
+      "frame_idx": 180,
+      "timestamp_sec": 7.5094,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.056059
+    },
+    {
+      "frame_idx": 185,
+      "timestamp_sec": 7.718,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.058592
+    },
+    {
+      "frame_idx": 190,
+      "timestamp_sec": 7.9266,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.058592
+    },
+    {
+      "frame_idx": 195,
+      "timestamp_sec": 8.1352,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 1,
+      "motion_bbox": [
+        0,
+        288,
+        64,
+        324
+      ],
+      "crop_bbox": [
+        0,
+        270,
+        96,
+        342
+      ],
+      "importance": 0.775
+    },
+    {
+      "frame_idx": 205,
+      "timestamp_sec": 8.5524,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 240,
+      "timestamp_sec": 10.0125,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.060424
+    },
+    {
+      "frame_idx": 245,
+      "timestamp_sec": 10.2211,
+      "type": "scene_before",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 2.964757
+    },
+    {
+      "frame_idx": 250,
+      "timestamp_sec": 10.4297,
+      "type": "scene_boundary",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 2.964757
+    },
+    {
+      "frame_idx": 255,
+      "timestamp_sec": 10.6383,
+      "type": "scene_after",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 2.964757
+    },
+    {
+      "frame_idx": 260,
+      "timestamp_sec": 10.8469,
+      "type": "dense_full_frame",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.060424
+    },
+    {
+      "frame_idx": 275,
+      "timestamp_sec": 11.4727,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 9,
+      "class_name": "person",
+      "motion_bbox": [
+        128,
+        252,
+        192,
+        324
+      ],
+      "track_bbox": [
+        157,
+        280,
+        178,
+        321
+      ],
+      "crop_bbox": [
+        108,
+        230,
+        211,
+        345
+      ],
+      "importance": 0.7
+    },
+    {
+      "frame_idx": 305,
+      "timestamp_sec": 12.7242,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 345,
+      "timestamp_sec": 14.393,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 1,
+      "motion_bbox": [
+        256,
+        288,
+        320,
+        324
+      ],
+      "crop_bbox": [
+        224,
+        270,
+        352,
+        342
+      ],
+      "importance": 0.775
+    },
+    {
+      "frame_idx": 360,
+      "timestamp_sec": 15.0188,
+      "type": "scene_before",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 1.012813
+    },
+    {
+      "frame_idx": 360,
+      "timestamp_sec": 15.0188,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 18,
+      "class_name": "person",
+      "motion_bbox": [
+        256,
+        288,
+        320,
+        324
+      ],
+      "track_bbox": [
+        302,
+        274,
+        323,
+        330
+      ],
+      "crop_bbox": [
+        235,
+        257,
+        343,
+        346
+      ],
+      "importance": 0.557328
+    },
+    {
+      "frame_idx": 365,
+      "timestamp_sec": 15.2274,
+      "type": "scene_boundary",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 1.012813
+    },
+    {
+      "frame_idx": 370,
+      "timestamp_sec": 15.436,
+      "type": "scene_after",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 1.012813
+    },
+    {
+      "frame_idx": 375,
+      "timestamp_sec": 15.6446,
+      "type": "scene_after",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 1.934119
+    },
+    {
+      "frame_idx": 380,
+      "timestamp_sec": 15.8531,
+      "type": "scene_after",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 1.745105
+    },
+    {
+      "frame_idx": 385,
+      "timestamp_sec": 16.0617,
+      "type": "scene_after",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 1.529966
+    },
+    {
+      "frame_idx": 405,
+      "timestamp_sec": 16.8961,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 23,
+      "class_name": "person",
+      "motion_bbox": [
+        256,
+        252,
+        320,
+        324
+      ],
+      "track_bbox": [
+        301,
+        270,
+        322,
+        326
+      ],
+      "crop_bbox": [
+        236,
+        229,
+        341,
+        348
+      ],
+      "importance": 0.5
+    },
+    {
+      "frame_idx": 405,
+      "timestamp_sec": 16.8961,
+      "type": "sparse_global",
+      "crop_bbox": null,
+      "tube_id": null,
+      "importance": 0.0,
+      "source": "sparse_global"
+    },
+    {
+      "frame_idx": 425,
+      "timestamp_sec": 17.7305,
+      "type": "roi_crop",
+      "source": "motion_fallback_tube",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "motion_tube_id": 1,
+      "motion_bbox": [
+        256,
+        288,
+        320,
+        324
+      ],
+      "crop_bbox": [
+        224,
+        270,
+        352,
+        342
+      ],
+      "importance": 0.775
+    },
+    {
+      "frame_idx": 425,
+      "timestamp_sec": 17.7305,
+      "type": "roi_crop",
+      "source": "moving_object_track",
+      "observation_type": "observed_motion",
+      "motion_observed": true,
+      "track_id": 23,
+      "class_name": "person",
+      "motion_bbox": [
+        256,
+        288,
+        320,
+        324
+      ],
+      "track_bbox": [
+        290,
+        245,
+        316,
+        314
+      ],
+      "crop_bbox": [
+        236,
+        221,
+        339,
+        347
+      ],
+      "importance": 0.5
+    }
+  ],
+  "motion_type": "background_motion",
+  "roi_inputs": [],
+  "roi_source": "none",
+  "finalization": {
+    "final_motion_type": "background_motion",
+    "reason": "valid motion tubes are weak or absent",
+    "num_roi_inputs": 0,
+    "roi_source": "none",
+    "sparse_global_count": 5
+  }
+}

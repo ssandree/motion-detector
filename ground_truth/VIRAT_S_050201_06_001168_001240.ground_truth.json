@@ -1,0 +1,770 @@
+{
+  "video_id": "VIRAT_S_050201_06_001168_001240",
+  "native_fps": 29.97002997002997,
+  "target_fps": 5.0,
+  "frame_size": [
+    1920,
+    1080
+  ],
+  "motion_type": "event_motion",
+  "source": "curated_motion_pipeline",
+  "display_style": "motion_bbox_thin",
+  "notes": [
+    "No ROI before 20s.",
+    "22–28s: top-left motion only.",
+    "32–48s: motorcycle motion only (ByteTrack 197 + motion blobs).",
+    "No ROI after 48s."
+  ],
+  "expected_motions": [
+    {
+      "event_id": 0,
+      "virat_event_type": "top_left_motion",
+      "start_timestamp_sec": 22.0,
+      "end_timestamp_sec": 28.0
+    },
+    {
+      "event_id": 1,
+      "virat_event_type": "motorcycle_motion",
+      "start_timestamp_sec": 32.0,
+      "end_timestamp_sec": 48.0
+    }
+  ],
+  "roi_tracks": [
+    {
+      "roi_id": 1,
+      "label": "top_left_motion",
+      "linked_event_id": 0,
+      "source": "curated",
+      "roi_display": "thin",
+      "notes": "",
+      "start_frame_idx": 660,
+      "end_frame_idx": 834,
+      "start_timestamp_sec": 22.022,
+      "end_timestamp_sec": 27.8278,
+      "duration_sec": 5.8058,
+      "bbox_sequence_len": 24,
+      "bbox_sequence": [
+        {
+          "frame_idx": 660,
+          "timestamp_sec": 22.022,
+          "bbox": [
+            288,
+            108,
+            384,
+            162
+          ],
+          "object_bbox": [
+            288,
+            108,
+            384,
+            162
+          ]
+        },
+        {
+          "frame_idx": 666,
+          "timestamp_sec": 22.2222,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 672,
+          "timestamp_sec": 22.4224,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 678,
+          "timestamp_sec": 22.6226,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 684,
+          "timestamp_sec": 22.8228,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 690,
+          "timestamp_sec": 23.023,
+          "bbox": [
+            288,
+            108,
+            384,
+            162
+          ],
+          "object_bbox": [
+            288,
+            108,
+            384,
+            162
+          ]
+        },
+        {
+          "frame_idx": 696,
+          "timestamp_sec": 23.2232,
+          "bbox": [
+            288,
+            108,
+            384,
+            162
+          ],
+          "object_bbox": [
+            288,
+            108,
+            384,
+            162
+          ]
+        },
+        {
+          "frame_idx": 702,
+          "timestamp_sec": 23.4234,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 714,
+          "timestamp_sec": 23.8238,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 720,
+          "timestamp_sec": 24.024,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 726,
+          "timestamp_sec": 24.2242,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 732,
+          "timestamp_sec": 24.4244,
+          "bbox": [
+            288,
+            0,
+            672,
+            216
+          ],
+          "object_bbox": [
+            288,
+            0,
+            672,
+            216
+          ]
+        },
+        {
+          "frame_idx": 738,
+          "timestamp_sec": 24.6246,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 750,
+          "timestamp_sec": 25.025,
+          "bbox": [
+            288,
+            54,
+            384,
+            216
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            216
+          ]
+        },
+        {
+          "frame_idx": 756,
+          "timestamp_sec": 25.2252,
+          "bbox": [
+            288,
+            54,
+            384,
+            162
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            162
+          ]
+        },
+        {
+          "frame_idx": 762,
+          "timestamp_sec": 25.4254,
+          "bbox": [
+            288,
+            54,
+            384,
+            162
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            162
+          ]
+        },
+        {
+          "frame_idx": 768,
+          "timestamp_sec": 25.6256,
+          "bbox": [
+            288,
+            54,
+            384,
+            162
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            162
+          ]
+        },
+        {
+          "frame_idx": 774,
+          "timestamp_sec": 25.8258,
+          "bbox": [
+            288,
+            54,
+            384,
+            108
+          ],
+          "object_bbox": [
+            288,
+            54,
+            384,
+            108
+          ]
+        },
+        {
+          "frame_idx": 780,
+          "timestamp_sec": 26.026,
+          "bbox": [
+            288,
+            108,
+            384,
+            162
+          ],
+          "object_bbox": [
+            288,
+            108,
+            384,
+            162
+          ]
+        },
+        {
+          "frame_idx": 792,
+          "timestamp_sec": 26.4264,
+          "bbox": [
+            192,
+            0,
+            480,
+            162
+          ],
+          "object_bbox": [
+            192,
+            0,
+            480,
+            162
+          ]
+        },
+        {
+          "frame_idx": 810,
+          "timestamp_sec": 27.027,
+          "bbox": [
+            480,
+            0,
+            672,
+            54
+          ],
+          "object_bbox": [
+            480,
+            0,
+            672,
+            54
+          ]
+        },
+        {
+          "frame_idx": 816,
+          "timestamp_sec": 27.2272,
+          "bbox": [
+            288,
+            54,
+            480,
+            108
+          ],
+          "object_bbox": [
+            288,
+            54,
+            480,
+            108
+          ]
+        },
+        {
+          "frame_idx": 822,
+          "timestamp_sec": 27.4274,
+          "bbox": [
+            288,
+            0,
+            480,
+            108
+          ],
+          "object_bbox": [
+            288,
+            0,
+            480,
+            108
+          ]
+        },
+        {
+          "frame_idx": 834,
+          "timestamp_sec": 27.8278,
+          "bbox": [
+            384,
+            54,
+            480,
+            108
+          ],
+          "object_bbox": [
+            384,
+            54,
+            480,
+            108
+          ]
+        }
+      ]
+    },
+    {
+      "roi_id": 2,
+      "label": "motorcycle_motion",
+      "linked_event_id": 1,
+      "source": "curated",
+      "roi_display": "thin",
+      "notes": "",
+      "start_frame_idx": 1044,
+      "end_frame_idx": 1158,
+      "start_timestamp_sec": 34.8348,
+      "end_timestamp_sec": 38.6386,
+      "duration_sec": 3.8038,
+      "bbox_sequence_len": 20,
+      "bbox_sequence": [
+        {
+          "frame_idx": 1044,
+          "timestamp_sec": 34.8348,
+          "bbox": [
+            1152,
+            540,
+            1344,
+            756
+          ],
+          "object_bbox": [
+            1152,
+            540,
+            1344,
+            756
+          ]
+        },
+        {
+          "frame_idx": 1050,
+          "timestamp_sec": 35.035,
+          "bbox": [
+            1152,
+            540,
+            1248,
+            702
+          ],
+          "object_bbox": [
+            1152,
+            540,
+            1248,
+            702
+          ]
+        },
+        {
+          "frame_idx": 1056,
+          "timestamp_sec": 35.2352,
+          "bbox": [
+            1152,
+            486,
+            1248,
+            702
+          ],
+          "object_bbox": [
+            1152,
+            486,
+            1248,
+            702
+          ]
+        },
+        {
+          "frame_idx": 1062,
+          "timestamp_sec": 35.4354,
+          "bbox": [
+            1056,
+            486,
+            1248,
+            648
+          ],
+          "object_bbox": [
+            1056,
+            486,
+            1248,
+            648
+          ]
+        },
+        {
+          "frame_idx": 1068,
+          "timestamp_sec": 35.6356,
+          "bbox": [
+            1056,
+            486,
+            1248,
+            594
+          ],
+          "object_bbox": [
+            1056,
+            486,
+            1248,
+            594
+          ]
+        },
+        {
+          "frame_idx": 1074,
+          "timestamp_sec": 35.8358,
+          "bbox": [
+            1070,
+            441,
+            1148,
+            533
+          ],
+          "object_bbox": [
+            1070,
+            441,
+            1148,
+            533
+          ]
+        },
+        {
+          "frame_idx": 1080,
+          "timestamp_sec": 36.036,
+          "bbox": [
+            1065,
+            425,
+            1137,
+            510
+          ],
+          "object_bbox": [
+            1065,
+            425,
+            1137,
+            510
+          ]
+        },
+        {
+          "frame_idx": 1086,
+          "timestamp_sec": 36.2362,
+          "bbox": [
+            1056,
+            406,
+            1121,
+            483
+          ],
+          "object_bbox": [
+            1056,
+            406,
+            1121,
+            483
+          ]
+        },
+        {
+          "frame_idx": 1092,
+          "timestamp_sec": 36.4364,
+          "bbox": [
+            1038,
+            373,
+            1109,
+            458
+          ],
+          "object_bbox": [
+            1038,
+            373,
+            1109,
+            458
+          ]
+        },
+        {
+          "frame_idx": 1098,
+          "timestamp_sec": 36.6366,
+          "bbox": [
+            1028,
+            357,
+            1095,
+            438
+          ],
+          "object_bbox": [
+            1028,
+            357,
+            1095,
+            438
+          ]
+        },
+        {
+          "frame_idx": 1104,
+          "timestamp_sec": 36.8368,
+          "bbox": [
+            1019,
+            338,
+            1086,
+            419
+          ],
+          "object_bbox": [
+            1019,
+            338,
+            1086,
+            419
+          ]
+        },
+        {
+          "frame_idx": 1110,
+          "timestamp_sec": 37.037,
+          "bbox": [
+            960,
+            324,
+            1152,
+            432
+          ],
+          "object_bbox": [
+            960,
+            324,
+            1152,
+            432
+          ]
+        },
+        {
+          "frame_idx": 1116,
+          "timestamp_sec": 37.2372,
+          "bbox": [
+            960,
+            270,
+            1152,
+            432
+          ],
+          "object_bbox": [
+            960,
+            270,
+            1152,
+            432
+          ]
+        },
+        {
+          "frame_idx": 1122,
+          "timestamp_sec": 37.4374,
+          "bbox": [
+            960,
+            270,
+            1056,
+            432
+          ],
+          "object_bbox": [
+            960,
+            270,
+            1056,
+            432
+          ]
+        },
+        {
+          "frame_idx": 1128,
+          "timestamp_sec": 37.6376,
+          "bbox": [
+            977,
+            270,
+            1034,
+            340
+          ],
+          "object_bbox": [
+            977,
+            270,
+            1034,
+            340
+          ]
+        },
+        {
+          "frame_idx": 1134,
+          "timestamp_sec": 37.8378,
+          "bbox": [
+            960,
+            270,
+            1056,
+            378
+          ],
+          "object_bbox": [
+            960,
+            270,
+            1056,
+            378
+          ]
+        },
+        {
+          "frame_idx": 1140,
+          "timestamp_sec": 38.038,
+          "bbox": [
+            960,
+            270,
+            1056,
+            378
+          ],
+          "object_bbox": [
+            960,
+            270,
+            1056,
+            378
+          ]
+        },
+        {
+          "frame_idx": 1146,
+          "timestamp_sec": 38.2382,
+          "bbox": [
+            944,
+            229,
+            1000,
+            299
+          ],
+          "object_bbox": [
+            944,
+            229,
+            1000,
+            299
+          ]
+        },
+        {
+          "frame_idx": 1152,
+          "timestamp_sec": 38.4384,
+          "bbox": [
+            864,
+            216,
+            1056,
+            270
+          ],
+          "object_bbox": [
+            864,
+            216,
+            1056,
+            270
+          ]
+        },
+        {
+          "frame_idx": 1158,
+          "timestamp_sec": 38.6386,
+          "bbox": [
+            864,
+            216,
+            1056,
+            324
+          ],
+          "object_bbox": [
+            864,
+            216,
+            1056,
+            324
+          ]
+        }
+      ]
+    }
+  ]
+}

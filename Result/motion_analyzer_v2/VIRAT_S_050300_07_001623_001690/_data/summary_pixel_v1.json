@@ -1,0 +1,26 @@
+{
+  "stage": "pixel",
+  "video": "VIRAT_S_050300_07_001623_001690",
+  "video_path": "C:\\Datasets\\VIRAT\\video\\test_db\\VIRAT_S_050300_07_001623_001690.mp4",
+  "status": "ok",
+  "native_fps": 29.97002997002997,
+  "target_fps": 5.0,
+  "sampled_frame_pairs": 333,
+  "motion_map_shape": [
+    333,
+    1080,
+    1920
+  ],
+  "use_flow": false,
+  "use_global_compensation": true,
+  "flow_scale": 0.5,
+  "alpha": 1.0,
+  "beta": 0.5,
+  "motion_threshold": 0.05,
+  "elapsed_sec": 418.2,
+  "outputs": {
+    "motion_maps": "Result\\motion_analyzer_v2\\VIRAT_S_050300_07_001623_001690\\_cache\\motion_maps.npz",
+    "sampled_gray": "Result\\motion_analyzer_v2\\VIRAT_S_050300_07_001623_001690\\_cache\\sampled_gray.npz",
+    "frame_features": "Result\\motion_analyzer_v2\\VIRAT_S_050300_07_001623_001690\\_data\\frame_motion_features.csv"
+  }
+}

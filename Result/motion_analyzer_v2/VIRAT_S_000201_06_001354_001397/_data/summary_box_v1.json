@@ -1,0 +1,36 @@
+{
+  "stage": "box",
+  "video_name": "VIRAT_S_000201_06_001354_001397",
+  "status": "ok",
+  "total_blobs": 408,
+  "total_raw_blobs": 477,
+  "total_merged_blobs_before_persistence": 428,
+  "total_frames": 213,
+  "avg_blobs_per_frame": 1.92,
+  "small_blob_count": 142,
+  "camera_motion_frames": 183,
+  "grid_rows": 20,
+  "grid_cols": 20,
+  "cell_motion_threshold": 0.05,
+  "use_flow_filter": true,
+  "use_texture_suppression": true,
+  "use_nearby_blob_merge": true,
+  "nearby_merge_distance_ratio": 0.06,
+  "min_persistence_frames": 2,
+  "blobs_before_persistence_filter": 428,
+  "blobs_removed_single_frame": 20,
+  "elapsed_sec": 15.74,
+  "outputs": {
+    "motion_blobs_overlay": "Result\\motion_analyzer_v2\\VIRAT_S_000201_06_001354_001397\\motion_blobs_overlay.mp4",
+    "motion_blobs_raw": "Result\\motion_analyzer_v2\\VIRAT_S_000201_06_001354_001397\\_data\\motion_blobs_raw.csv",
+    "motion_blobs_merged": "Result\\motion_analyzer_v2\\VIRAT_S_000201_06_001354_001397\\_data\\motion_blobs_merged.csv",
+    "motion_blobs": "Result\\motion_analyzer_v2\\VIRAT_S_000201_06_001354_001397\\_data\\motion_blobs.csv",
+    "frame_top_blobs": "Result\\motion_analyzer_v2\\VIRAT_S_000201_06_001354_001397\\_data\\frame_top_blobs.csv"
+  },
+  "rank_comparison": {
+    "frames_with_rank_disagreement": 0,
+    "total_frames_with_blobs": 210,
+    "disagreement_ratio": 0.0,
+    "small_blobs_in_importance_topk_not_energy_topk": 0
+  }
+}
