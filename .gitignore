@@ -14,12 +14,7 @@ venv/
 *.pt
 
 # Pipeline caches and heavy generated artifacts
-Result/**/_cache/
-Result/**/*.npz
-Result/**/*.mp4
-Result/**/adaptive_input/
-Result/**/batch_summary*.json
-ground_truth/overlays/
+outputs/**
 
 # IDE / OS
 .idea/

@@ -1,0 +1,63 @@
+"""Block motion: fixed-size sub-block representation from residual flow."""
+
+from motion_analyzer.block_motion.representation import (
+    MAD_CONSISTENCY,
+    SUPPORTED_BLOCK_SIZES,
+    BlockRepresentationConfig,
+    FrameBlockRepresentation,
+    compute_block_features,
+    load_block_representation_bundle,
+    load_residual_flow_bundle,
+    median_mad_threshold,
+    process_block_representation,
+    save_block_representation_artifacts,
+)
+from motion_analyzer.block_motion.sub_block_aggregation import (
+    AggregatedFrame,
+    SubBlockAggregationConfig,
+    aggregate_from_representation,
+    extract_8cc_blobs,
+    load_sub_block_aggregation,
+    load_sub_block_cc,
+    native_mad_threshold,
+    pool_rms_map,
+    process_and_save_video,
+    save_sub_block_aggregation,
+)
+from motion_analyzer.temporal.temporal_linking import (
+    FrameBlob,
+    TemporalLinkingConfig,
+    Trajectory,
+    link_blobs,
+    load_blobs_from_components_csv,
+    save_temporal_linking_outputs,
+)
+
+__all__ = [
+    "MAD_CONSISTENCY",
+    "SUPPORTED_BLOCK_SIZES",
+    "BlockRepresentationConfig",
+    "FrameBlockRepresentation",
+    "compute_block_features",
+    "load_block_representation_bundle",
+    "load_residual_flow_bundle",
+    "median_mad_threshold",
+    "process_block_representation",
+    "save_block_representation_artifacts",
+    "AggregatedFrame",
+    "SubBlockAggregationConfig",
+    "aggregate_from_representation",
+    "extract_8cc_blobs",
+    "load_sub_block_aggregation",
+    "load_sub_block_cc",
+    "native_mad_threshold",
+    "pool_rms_map",
+    "process_and_save_video",
+    "save_sub_block_aggregation",
+    "FrameBlob",
+    "TemporalLinkingConfig",
+    "Trajectory",
+    "link_blobs",
+    "load_blobs_from_components_csv",
+    "save_temporal_linking_outputs",
+]

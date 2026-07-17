@@ -1,2 +1,0 @@
-duration_sec,sampled_fps,num_sampled_frames,global_motion_level,motion_burst_ratio,motion_area_mean,motion_area_variance,num_motion_blobs,num_motion_tubes,small_tube_ratio,dominant_tube_energy_ratio,dominant_tube_importance_ratio,multi_motion_score,scene_change_count,local_motion_importance_ratio,max_tube_importance,strong_tube_count,mean_global_motion_score,mean_residual_motion_area,camera_motion_frame_ratio,mean_motion_concentration
-42.6,5.0,213,0.023896,0.183099,0.058538,0.002752,408,16,0.0,0.313517,0.097244,0.647619,0,0.0,0.603359,15,0.539195,0.041127,0.859155,0.413978

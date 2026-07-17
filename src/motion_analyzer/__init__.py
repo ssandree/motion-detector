@@ -1,3 +1,3 @@
-"""Motion Analyzer — v1 (grid motion) and v2 (object-level) pipelines."""
+"""Motion analyzer: residual Farneback flow, global motion, block representation."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
