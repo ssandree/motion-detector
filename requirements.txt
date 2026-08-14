@@ -1,6 +1,7 @@
-numpy>=1.24
-opencv-python>=4.8
-pandas>=2.0
-scipy>=1.11
-scikit-learn>=1.3
-ultralytics>=8.0
+numpy>=2.0,<2.8
+matplotlib>=3.7
+setuptools>=70,<81
+# OpenCV must be a CUDA build with cudaoptflow (not pip opencv-python).
+# Build/install:
+#   bash scripts/setup/build_opencv_cuda.sh
+#   source ~/.local/opencv-cuda/env.sh

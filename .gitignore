@@ -15,6 +15,7 @@ venv/
 
 # Pipeline caches and heavy generated artifacts
 outputs/**
+data/**
 
 # IDE / OS
 .idea/
