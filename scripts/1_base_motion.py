@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Stage 1 — 5fps → Gap1 Farneback@1/4 → 8×8×1 R-mean → P15 → T5 @4×4 (16px).
+"""Stage 1 — 5fps → Gap1 Farneback@1/4 → 6×6×1 R-mean → P13 → T5 @4×4 (16px).
 
-Optical flow is Gap1 only. Official Stage1:
-  v1 = Σ(R_ap · v_i) / Σ(R_ap) over 8×8 spatial (no temporal mix)
-  keep = P15 ≥ 0.85
-  U1 = T5(v1 × keep)
+Optical flow is Gap1 only. Official Stage1 (locked):
+  mag < 0.5 → 0
+  v -= p_strip (v·t) t
+  v1 = Σ(R v) / Σ(R) over 6×6, R = R_ap × strength
+  keep = P13 ≥ p13_min (default 0.8)
+  U1 = T5(v1 × keep)  # mean all frames in [f−2,f+2], zeros included
+  ‖U1‖ ≤ 0.5 → 0
 
 Default GPU path: upload gray once → keep ¼ → Farneback + Sobel R_ap + spatial
-8×8 mean on GPU → download 16px grid → CPU P15 + T5. --no_gpu uses CPU 8×8×1.
+6×6 mean on GPU → download 16px grid → CPU P13 + T5. --no_gpu uses CPU 6×6×1.
 """
 
 from __future__ import annotations
@@ -24,10 +27,19 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from motion_analyzer.config import (  # noqa: E402
+    APERTURE_P_HARD_DILATE_PX,
+    APERTURE_P_HARD_TAU,
+    APERTURE_R_TIMES_STRENGTH,
+    APERTURE_STRIP_TANGENT,
     DEFAULT_DATA_ROOT,
+    PRE_AGG_MAG_THRESHOLD,
     RESIZED_BASE_BLOCK,
+    STAGE1_CELL_MAG_FLOOR,
     STAGE1_GAPS,
+    STAGE1_P13_MIN,
+    STAGE1_P15_WINDOW,
     STAGE1_SPATIAL_WIN,
+    STAGE1_T5_ACTIVE_ONLY,
     STAGE1_TEMPORAL_RADIUS,
     PipelineConfig,
     load_target_video_ids,
@@ -58,7 +70,7 @@ def parse_args() -> argparse.Namespace:
         "--spatial_win",
         type=int,
         default=STAGE1_SPATIAL_WIN,
-        help="Spatial mean window in dense pixels (default 8).",
+        help=f"Spatial mean window in dense pixels (default {STAGE1_SPATIAL_WIN}).",
     )
     parser.add_argument(
         "--temporal_radius",
@@ -70,9 +82,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max_seconds", type=float, default=None)
     parser.add_argument("--video_list", type=Path, default=None)
     parser.add_argument(
+        "--p_window",
+        type=int,
+        default=STAGE1_P15_WINDOW,
+        help=(
+            f"Directional persistence window in frames "
+            f"(default {STAGE1_P15_WINDOW} = P{STAGE1_P15_WINDOW})."
+        ),
+    )
+    parser.add_argument(
         "--no_gpu",
         action="store_true",
-        help="Disable Stage1 GPU keep/aggregate path (CPU 8×8×1 then P15+T5).",
+        help="Disable Stage1 GPU keep/aggregate path (CPU spatial mean then P+T5).",
     )
     return parser.parse_args()
 
@@ -90,6 +111,8 @@ def main() -> int:
         raise SystemExit("--spatial_win must be >= --block_size")
     if int(args.temporal_radius) < 0:
         raise SystemExit("--temporal_radius must be >= 0")
+    if int(args.p_window) < 1:
+        raise SystemExit("--p_window must be >= 1")
     cfg = PipelineConfig(sampling_fps=float(args.sampling_fps))
     cfg.validate()
 
@@ -114,24 +137,37 @@ def main() -> int:
                 temporal_radius=int(args.temporal_radius),
                 gaps=STAGE1_GAPS,
                 use_gpu=not bool(args.no_gpu),
+                persist_window=int(args.p_window),
             )
             info["elapsed_sec"] = round(time.time() - started, 3)
             rows.append(info)
             logger.info(
-                "  maps=%s shape=%s gaps=%s -> %s (%.1fs)",
+                "  maps=%s shape=%s gaps=%s -> %s (pipeline %.3fs, wall %.1fs)",
                 info["num_aligned_maps"],
                 info["map_shape"],
                 info["gaps"],
                 info["base_motion_npz"],
+                float(info.get("pipeline_sec") or 0.0),
                 info["elapsed_sec"],
             )
         except Exception as exc:  # noqa: BLE001
             logger.exception("  FAILED %s: %s", video_id, exc)
             rows.append({"video_id": video_id, "error": str(exc)})
 
+    t5_tag = "T5_active" if bool(STAGE1_T5_ACTIVE_ONLY) else "T5"
+    win = int(args.spatial_win)
     summary = {
         "stage": 1,
-        "variant": "base_motion_gap1_8x8x1_P15_T5",
+        "variant": f"base_motion_gap1_{win}x{win}x1_P{int(args.p_window)}_{t5_tag}",
+        "t5_active_only": bool(STAGE1_T5_ACTIVE_ONLY),
+        "p15_window": int(args.p_window),
+        "p13_min": float(STAGE1_P13_MIN),
+        "pre_agg_mag_threshold": float(PRE_AGG_MAG_THRESHOLD),
+        "aperture_p_hard_tau": float(APERTURE_P_HARD_TAU),
+        "aperture_p_hard_dilate_px": int(APERTURE_P_HARD_DILATE_PX),
+        "aperture_r_times_strength": bool(APERTURE_R_TIMES_STRENGTH),
+        "aperture_strip_tangent": bool(APERTURE_STRIP_TANGENT),
+        "cell_mag_floor": float(STAGE1_CELL_MAG_FLOOR),
         "stage1_gpu": not bool(args.no_gpu),
         "gaps": list(STAGE1_GAPS),
         "block_size": int(args.block_size),

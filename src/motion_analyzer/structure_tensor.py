@@ -17,6 +17,8 @@ import numpy as np
 from motion_analyzer.config import (
     APERTURE_ALPHA,
     APERTURE_GAMMA,
+    APERTURE_R_TIMES_STRENGTH,
+    APERTURE_STRIP_TANGENT,
     APERTURE_TAU_EDGE,
     INPUT_SCALE,
     STRUCTURE_TENSOR_EPS,
@@ -138,6 +140,17 @@ def _gpu_where_mask(
     )
 
 
+def _texture_strength_gpu(
+    lambda2: cv2.cuda.GpuMat, *, tau: float, eps: float
+) -> cv2.cuda.GpuMat:
+    """1 - exp(-λ2 / τ) on GPU."""
+    tau_f = max(float(tau), float(eps))
+    neg = cv2.cuda.multiplyWithScalar(lambda2, -1.0 / tau_f)
+    return cv2.cuda.addWithScalar(
+        cv2.cuda.multiplyWithScalar(cv2.cuda.exp(neg), -1.0), 1.0
+    )
+
+
 def aperture_reliability_gpu(
     gray_gpu: cv2.cuda.GpuMat,
     u_gpu: cv2.cuda.GpuMat,
@@ -149,11 +162,18 @@ def aperture_reliability_gpu(
     alpha: float = APERTURE_ALPHA,
     eps: float = STRUCTURE_TENSOR_EPS,
     min_flow_mag: float = 1e-6,
-) -> cv2.cuda.GpuMat:
-    """Direction-aware R_ap ∈ [0,1] on GPU (aggregation weight, flow unchanged).
+    times_strength: bool = APERTURE_R_TIMES_STRENGTH,
+    strength_tau: float = STRUCTURE_TENSOR_STRENGTH_TAU,
+    strip_tangent: bool = APERTURE_STRIP_TANGENT,
+) -> tuple[cv2.cuda.GpuMat, cv2.cuda.GpuMat, cv2.cuda.GpuMat, cv2.cuda.GpuMat]:
+    """Direction-aware R_ap / P_ap on GPU, optional along-tangent strip.
 
     P_ap = strong_edge * edgeness * alignment^γ
     R_ap = clip(1 - α * P_ap, 0, 1)
+    If times_strength: R_ap *= 1-exp(-λ2/τ) so flat pixels do not vote.
+    If strip_tangent: v -= p_strip (v·t) t with
+    p_strip = clip(λ1/τ_edge, 0, 1) * edgeness * alignment^γ.
+    Returns (R_ap, P_ap, u, v).
     """
     fields = compute_structure_tensor_fields_gpu(
         gray_gpu, tensor_sigma=float(tensor_sigma)
@@ -224,7 +244,28 @@ def aperture_reliability_gpu(
     )
     r_ap = _gpu_one_minus(cv2.cuda.multiplyWithScalar(p_ap, float(alpha)))
     r_ap = cv2.cuda.minWithScalar(cv2.cuda.maxWithScalar(r_ap, 0.0), 1.0)
-    return r_ap
+    if bool(times_strength):
+        strength = _texture_strength_gpu(
+            lambda2, tau=float(strength_tau), eps=float(eps_f)
+        )
+        r_ap = cv2.cuda.multiply(r_ap, strength)
+        r_ap = cv2.cuda.minWithScalar(cv2.cuda.maxWithScalar(r_ap, 0.0), 1.0)
+    if bool(strip_tangent):
+        tau_e = max(float(tau_edge), float(eps_f))
+        edge_gate = cv2.cuda.minWithScalar(
+            cv2.cuda.multiplyWithScalar(lambda1, 1.0 / tau_e), 1.0
+        )
+        p_strip = cv2.cuda.multiply(cv2.cuda.multiply(edge_gate, edgeness), align_g)
+        proj = cv2.cuda.add(
+            cv2.cuda.multiply(u_gpu, tx), cv2.cuda.multiply(v_gpu, ty)
+        )
+        u_gpu = cv2.cuda.subtract(
+            u_gpu, cv2.cuda.multiply(cv2.cuda.multiply(p_strip, proj), tx)
+        )
+        v_gpu = cv2.cuda.subtract(
+            v_gpu, cv2.cuda.multiply(cv2.cuda.multiply(p_strip, proj), ty)
+        )
+    return r_ap, p_ap, u_gpu, v_gpu
 
 
 def downscale_gray_for_flow(
@@ -335,13 +376,16 @@ def compute_aperture_reliability(
     alpha: float = APERTURE_ALPHA,
     eps: float = STRUCTURE_TENSOR_EPS,
     min_flow_mag: float = 1e-6,
+    times_strength: bool = APERTURE_R_TIMES_STRENGTH,
+    strength_tau: float = STRUCTURE_TENSOR_STRENGTH_TAU,
 ) -> dict[str, np.ndarray]:
     """Direction-aware aperture reliability R_ap ∈ [0,1] (aggregation weight only).
 
     P_ap = strong_edge * edgeness * alignment^γ
     R_ap = clip(1 - α * P_ap, 0, 1)
+    If times_strength: R_ap *= 1-exp(-λ2/τ) so flat pixels do not vote.
 
-    Does not modify ``flow``. Does not include legacy R_st (shape×strength).
+    Does not modify ``flow``.
     """
     fields = compute_structure_tensor_fields(gray, tensor_sigma=float(tensor_sigma))
     lambda1 = fields["lambda1"]
@@ -377,6 +421,14 @@ def compute_aperture_reliability(
     g = max(float(gamma), 0.0)
     p_ap = (strong_edge * edgeness * np.power(alignment, g)).astype(np.float32)
     r_ap = np.clip(1.0 - float(alpha) * p_ap, 0.0, 1.0).astype(np.float32)
+    tau_s = max(float(strength_tau), float(eps))
+    strength = (1.0 - np.exp(-lambda2 / tau_s)).astype(np.float32)
+    if bool(times_strength):
+        r_ap = np.clip(r_ap * strength, 0.0, 1.0).astype(np.float32)
+    tau_e = max(float(tau_edge), float(eps))
+    p_strip = (
+        np.clip(lambda1 / tau_e, 0.0, 1.0) * edgeness * np.power(alignment, g)
+    ).astype(np.float32)
 
     return {
         "lambda1": lambda1,
@@ -388,11 +440,69 @@ def compute_aperture_reliability(
         "alignment": alignment,
         "P_ap": p_ap,
         "R_ap": r_ap,
+        "p_strip": p_strip,
+        "strength": strength,
         "flow_mag": mag,
         "Jxx": fields["Jxx"],
         "Jyy": fields["Jyy"],
         "Jxy": fields["Jxy"],
     }
+
+
+def zero_flow_where_p_ap(
+    flow: np.ndarray, p_ap: np.ndarray, *, tau: float, dilate_px: int = 0
+) -> np.ndarray:
+    """Hard-zero dense flow where P_ap > tau. Optional dilate of the kill mask."""
+    vec = np.asarray(flow, dtype=np.float32).copy()
+    lo = float(tau)
+    if lo < 0:
+        return vec
+    kill = (np.asarray(p_ap, dtype=np.float32) > lo).astype(np.uint8)
+    px = int(dilate_px)
+    if px > 0:
+        k = 2 * px + 1
+        ker = np.ones((k, k), np.uint8)
+        if kill.ndim == 3:
+            kill = np.stack(
+                [cv2.dilate(kill[t], ker) for t in range(kill.shape[0])], axis=0
+            )
+        else:
+            kill = cv2.dilate(kill, ker)
+    vec[kill > 0] = 0.0
+    return vec
+
+
+def strip_along_tangent(
+    flow: np.ndarray, *, tangent_x: np.ndarray, tangent_y: np.ndarray, p_strip: np.ndarray
+) -> np.ndarray:
+    """v ← v - p_strip (v·t) t. Leaves pixels with p_strip=0 unchanged."""
+    vec = np.asarray(flow, dtype=np.float32)
+    tx = np.asarray(tangent_x, dtype=np.float32)
+    ty = np.asarray(tangent_y, dtype=np.float32)
+    p = np.asarray(p_strip, dtype=np.float32)
+    if vec.shape[:2] != tx.shape[:2] or vec.shape[:2] != p.shape[:2]:
+        raise ValueError(
+            f"shape mismatch flow {vec.shape} tangent {tx.shape} p_strip {p.shape}"
+        )
+    u = vec[..., 0]
+    v = vec[..., 1]
+    proj = u * tx + v * ty
+    out = np.empty_like(vec)
+    out[..., 0] = (u - p * proj * tx).astype(np.float32)
+    out[..., 1] = (v - p * proj * ty).astype(np.float32)
+    return out
+
+
+def strip_along_tangent_stack(
+    flow_stack: np.ndarray, diags: Mapping[str, np.ndarray]
+) -> np.ndarray:
+    """Per-frame along-tangent strip using stacked tangent / p_strip."""
+    return strip_along_tangent(
+        flow_stack,
+        tangent_x=diags["tangent_x"],
+        tangent_y=diags["tangent_y"],
+        p_strip=diags["p_strip"],
+    )
 
 
 def aperture_reliability_stack_for_flow(
@@ -423,6 +533,9 @@ def aperture_reliability_stack_for_flow(
         "P_ap",
         "lambda1",
         "lambda2",
+        "tangent_x",
+        "tangent_y",
+        "p_strip",
     )
     diag_lists: dict[str, list[np.ndarray]] = {k: [] for k in diag_keys}
     for i in range(t_len):

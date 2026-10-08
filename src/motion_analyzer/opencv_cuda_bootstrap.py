@@ -26,6 +26,14 @@ def bootstrap_opencv_cuda(prefix: Path | None = None) -> Path | None:
     has_versioned = (cv2_dir / f"config-{major}.{minor}.py").is_file()
     has_generic = (cv2_dir / "config-3.py").is_file()
     if not (has_versioned or has_generic):
+        # PYTHONPATH may still point at this tree (e.g. a 3.14 CUDA build while
+        # the active interpreter is 3.12). Drop it so the venv cv2 can load.
+        marker = "opencv-cuda/lib/python/site-packages"
+        sys.path = [
+            p
+            for p in sys.path
+            if marker not in str(p).replace("\\", "/")
+        ]
         return None
 
     site_s = str(site.resolve())

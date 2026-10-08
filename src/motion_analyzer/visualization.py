@@ -53,7 +53,17 @@ def expand_cells(
     frame_width: int,
 ) -> np.ndarray:
     expanded = np.repeat(np.repeat(values, cell_px, axis=0), cell_px, axis=1)
-    return expanded[:frame_height, :frame_width]
+    out_h = min(int(frame_height), int(expanded.shape[0]))
+    out_w = min(int(frame_width), int(expanded.shape[1]))
+    if expanded.ndim == 2:
+        out = np.zeros((int(frame_height), int(frame_width)), dtype=expanded.dtype)
+    else:
+        out = np.zeros(
+            (int(frame_height), int(frame_width)) + tuple(expanded.shape[2:]),
+            dtype=expanded.dtype,
+        )
+    out[:out_h, :out_w] = expanded[:out_h, :out_w]
+    return out
 
 
 def heat_overlay(

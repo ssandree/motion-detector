@@ -1,8 +1,8 @@
-"""Stage 3: ROI tube — hysteresis block-events + 8-neigh time-overlap merge."""
+"""Stage 3 loaders and ROI overlay drawing (official clustering: ``stage3.v2``).
+"""
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import cv2
@@ -18,26 +18,9 @@ from motion_analyzer.config import (
     HEAT_VMAX,
     HEAT_VMIN,
     ORIGINAL_CELL_PX,
-    PipelineConfig,
-    ROI_MAX_GAP,
-    ROI_MERGE_SPATIAL_DIST,
-    ROI_MERGE_TEMPORAL_GAP,
-    ROI_MIN_BLOCK_EVENT,
-    ROI_MIN_TUBE_CELLS,
-    ROI_MIN_TUBE_DURATION,
-    ROI_NEIGH_RADIUS,
-    ROI_SUPPRESS_CONTAINED,
-    ROI_TAU_HIGH,
-    ROI_TAU_LOW,
     UNIT_CELL_PX,
 )
-from stage3.hysteresis_tube import (
-    build_roi_tubes,
-    tube_to_dict,
-    tubes_to_frame_overlays,
-)
-from stage3.tube_3d_viz import render_tubes_3d
-from motion_analyzer.video_io import resolve_video_path, sample_video_frames
+from stage3.hysteresis_tube import RoiTube, tubes_to_frame_overlays
 from motion_analyzer.visualization import grid_bbox_to_pixels, heat_overlay
 
 # Stage2/3 turbo heatmap absolute scale (from config; frozen at 0.8~3.5).
@@ -227,110 +210,57 @@ def draw_tube_overlays(
         )
         cv2.putText(
             out,
-            f"T{tube_id}",
+            f"E{tube_id}",
             (pxb[0] + 4, max(16, pxb[1] + 18)),
             cv2.FONT_HERSHEY_SIMPLEX,
-            0.6,
+            0.45,
             color,
-            2,
+            1,
             cv2.LINE_AA,
         )
     return out
 
 
-def process_video(
-    video_id: str,
+def write_roi_overlay_mp4(
     *,
-    cfg: PipelineConfig,
-    fusion_root: Path,
-    output_root: Path,
-    fusion: str = DEFAULT_FUSION,
-    prefer_unit: bool = True,
-    tau_high: float = ROI_TAU_HIGH,
-    tau_low: float = ROI_TAU_LOW,
-    max_gap: int = ROI_MAX_GAP,
-    min_block_event: int = ROI_MIN_BLOCK_EVENT,
-    min_tube_cells: int = ROI_MIN_TUBE_CELLS,
-    min_tube_duration: int = ROI_MIN_TUBE_DURATION,
-    neigh_radius: int = ROI_NEIGH_RADIUS,
-    merge_spatial_dist: int = ROI_MERGE_SPATIAL_DIST,
-    merge_temporal_gap: int = ROI_MERGE_TEMPORAL_GAP,
-    suppress_contained: bool = ROI_SUPPRESS_CONTAINED,
-    write_3d: bool = True,
-    viz_3d_root: Path | None = None,
+    frames_bgr: list[np.ndarray],
+    frame_indices: list[int],
+    tubes: list[RoiTube],
+    mag: np.ndarray,
+    cell_px: int,
+    out_path: Path,
+    fps: float,
     heat_vmin: float = HEAT_VMIN,
     heat_vmax: float = HEAT_VMAX,
     heat_alpha: float = HEAT_MAX_ALPHA,
-    threshold: float | None = None,
-    min_area: int = 1,
-) -> dict:
-    del threshold, min_area
-    fusion_npz = resolve_stage2_npz(fusion_root, video_id, fusion=fusion)
-    mag, meta = load_stage2_unit_map(
-        fusion_npz, prefer_unit=prefer_unit, fusion=fusion
-    )
-    if prefer_unit and str(meta["key"]).startswith("MU"):
-        cell_px = int(meta["unit_cell_px"])
-    else:
-        cell_px = int(meta.get("original_cell_px") or ORIGINAL_CELL_PX)
-
-    block_events, tubes, suppressed_ids = build_roi_tubes(
-        mag,
-        tau_high=float(tau_high),
-        tau_low=float(tau_low),
-        max_gap=int(max_gap),
-        min_block_event=int(min_block_event),
-        neigh_radius=int(neigh_radius),
-        merge_spatial_dist=int(merge_spatial_dist),
-        merge_temporal_gap=int(merge_temporal_gap),
-        min_tube_cells=int(min_tube_cells),
-        min_tube_duration=int(min_tube_duration),
-        suppress_contained=bool(suppress_contained),
-    )
-    by_frame = tubes_to_frame_overlays(tubes, num_frames=mag.shape[0])
-
-    video_path = resolve_video_path(video_id, cfg.video_search_roots)
-    sampled = sample_video_frames(video_path, cfg.sampling_fps)
-    align_start = int(meta.get("align_start_sampled_index") or 0)
-    if meta["sampled_index_curr"] is not None:
-        curr_indices = [int(i) for i in meta["sampled_index_curr"].tolist()]
-    else:
-        curr_indices = list(range(align_start, align_start + mag.shape[0]))
-    if len(curr_indices) != mag.shape[0]:
-        raise ValueError(
-            f"{video_id}: mag frames={mag.shape[0]} but indices={len(curr_indices)}"
-        )
-
-    out_dir = output_root / video_id
-    out_dir.mkdir(parents=True, exist_ok=True)
-    tag = (
-        f"hyst_h{tau_high:g}_l{tau_low:g}_gap{max_gap}"
-        f"_n{neigh_radius}_ms{merge_spatial_dist}_mt{merge_temporal_gap}"
-        f"_min{min_block_event}_c{min_tube_cells}d{min_tube_duration}"
-    )
-    mp4_path = out_dir / f"{video_id}_roi_tube_{tag}.mp4"
-    fh, fw = sampled[0].bgr.shape[:2]
+) -> int:
+    """Lifetime-fixed ROI overlay MP4 with Stage2 turbo MU heatmap."""
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    if not frames_bgr:
+        return 0
+    overlays = tubes_to_frame_overlays(tubes, num_frames=int(mag.shape[0]))
+    fh, fw = frames_bgr[0].shape[:2]
     writer = cv2.VideoWriter(
-        str(mp4_path),
+        str(out_path),
         cv2.VideoWriter_fourcc(*"mp4v"),
-        float(cfg.sampling_fps),
+        float(fps),
         (fw, fh),
     )
     if not writer.isOpened():
-        raise RuntimeError(f"Failed to open writer: {mp4_path}")
-
+        raise RuntimeError(f"Failed to open writer: {out_path}")
     written = 0
     try:
-        for t, samp_idx in enumerate(curr_indices):
-            if samp_idx < 0 or samp_idx >= len(sampled):
+        for t, samp_idx in enumerate(frame_indices):
+            if samp_idx < 0 or samp_idx >= len(frames_bgr):
                 continue
-            frame = sampled[samp_idx].bgr
+            mag_frame = mag[t] if 0 <= t < mag.shape[0] else None
             writer.write(
                 draw_tube_overlays(
-                    frame,
-                    by_frame[t],
-                    cell_px=cell_px,
-                    mag_frame=mag[t],
+                    frames_bgr[samp_idx],
+                    overlays.get(t, []),
+                    cell_px=int(cell_px),
+                    mag_frame=mag_frame,
                     heat_vmin=float(heat_vmin),
                     heat_vmax=float(heat_vmax),
                     heat_alpha=float(heat_alpha),
@@ -339,72 +269,5 @@ def process_video(
             written += 1
     finally:
         writer.release()
+    return written
 
-    params = {
-        "tau_high": float(tau_high),
-        "tau_low": float(tau_low),
-        "max_gap": int(max_gap),
-        "neigh_radius": int(neigh_radius),
-        "merge_spatial_dist": int(merge_spatial_dist),
-        "merge_temporal_gap": int(merge_temporal_gap),
-        "min_block_event": int(min_block_event),
-        "min_tube_cells": int(min_tube_cells),
-        "min_tube_duration": int(min_tube_duration),
-        "suppress_contained": bool(suppress_contained),
-        "heat_vmin": float(heat_vmin),
-        "heat_vmax": float(heat_vmax),
-        "heat_alpha": float(heat_alpha),
-        "heat_colormap": "turbo",
-    }
-    tracks_json = {
-        "video_id": video_id,
-        "variant": "hysteresis_block_tube_8cc_proximity_merge",
-        "params": params,
-        "fusion_npz": str(fusion_npz),
-        "score_key": meta["key"],
-        "cell_px": cell_px,
-        "num_frames": int(mag.shape[0]),
-        "num_block_events": len(block_events),
-        "num_tracks": len(tubes),
-        "suppressed_contained_tube_ids": list(suppressed_ids),
-        "num_suppressed_contained": len(suppressed_ids),
-        "tracks": [tube_to_dict(tube) for tube in tubes],
-    }
-    tracks_path = out_dir / "roi_tracks.json"
-    tracks_path.write_text(json.dumps(tracks_json, indent=2) + "\n", encoding="utf-8")
-
-    fig_3d_path = None
-    if write_3d:
-        fig_dir = Path(viz_3d_root) if viz_3d_root is not None else out_dir
-        fig_dir.mkdir(parents=True, exist_ok=True)
-        fig_3d_path = fig_dir / f"{video_id}_roi_tubes_3d_{tag}.png"
-        render_tubes_3d(
-            tubes,
-            grid_h=int(mag.shape[1]),
-            grid_w=int(mag.shape[2]),
-            num_frames=int(mag.shape[0]),
-            out_path=fig_3d_path,
-            title=(
-                f"{video_id} | tubes={len(tubes)} | "
-                f"τH={tau_high:g} τL={tau_low:g} r={neigh_radius} "
-                f"ms={merge_spatial_dist} mt={merge_temporal_gap}"
-            ),
-        )
-
-    return {
-        "video_id": video_id,
-        "video_path": str(video_path),
-        "fusion_npz": str(fusion_npz),
-        "tracks_json": str(tracks_path),
-        "visualization_mp4": str(mp4_path),
-        "visualization_3d": str(fig_3d_path) if fig_3d_path else None,
-        "visualization_frames": written,
-        "num_tracks": len(tubes),
-        "num_block_events": len(block_events),
-        "num_suppressed_contained": len(suppressed_ids),
-        "suppressed_contained_tube_ids": list(suppressed_ids),
-        "score_key": meta["key"],
-        "cell_px": cell_px,
-        "map_shape": list(mag.shape),
-        "params": params,
-    }

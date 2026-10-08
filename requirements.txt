@@ -1,7 +1,0 @@
-numpy>=2.0,<2.8
-matplotlib>=3.7
-setuptools>=70,<81
-# OpenCV must be a CUDA build with cudaoptflow (not pip opencv-python).
-# Build/install:
-#   bash scripts/setup/build_opencv_cuda.sh
-#   source ~/.local/opencv-cuda/env.sh

@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
-"""Stage 3 — hysteresis ROI tubes + MP4 + 3D (x,y,t) figures.
+"""Stage 3 — official ROI tubes (attractive Union-Find → AABB composition).
 
-Per-block temporal events:
-  start if MU ≥ τ_high, end once MU ≤ τ_low (max_gap=0), keep if length ≥ 3.
-Merge: Chebyshev ≤2 with time overlap (24-cc), then proximity merge
-  if spatial_dist ≤2 and temporal_gap ≤20.
-
-Defaults: τ_high=0.7, τ_low=0.4, max_gap=0, neigh_radius=2 (24-cc),
-          merge_spatial=2, merge_temporal=20, min_block_event=3,
-          keep tube if cells≥2 AND duration≥3 (≤1×64px block → no ROI).
+  1. Block events          tau_high=0.2, max_gap=5, 64px
+  2. Attractive Union-Find c>0 merge, hashed Chebyshev≤2
+  3. ROI composition       compactness≤1.5, tgap≤15, max 3 ROI/frame
+  4. Filter + fixed lifetime bbox
 
 Outputs:
   videos/json → outputs/stage3/3_roi_tube/<stamp>/
@@ -34,17 +30,18 @@ from motion_analyzer.config import (  # noqa: E402
     HEAT_VMAX,
     HEAT_VMIN,
     ROI_MAX_GAP,
-    ROI_MERGE_SPATIAL_DIST,
-    ROI_MERGE_TEMPORAL_GAP,
     ROI_MIN_BLOCK_EVENT,
     ROI_MIN_TUBE_CELLS,
     ROI_MIN_TUBE_DURATION,
-    ROI_NEIGH_RADIUS,
-    ROI_SUPPRESS_CONTAINED,
     ROI_TAU_HIGH,
     ROI_TAU_LOW,
     PipelineConfig,
     load_target_video_ids,
+)
+from stage3.v2.roi_composition import (  # noqa: E402
+    COMP_COMPACTNESS_FACTOR,
+    COMP_MAX_ROI_PER_FRAME,
+    COMP_MAX_TEMPORAL_GAP,
 )
 from stage3 import list_videos_in_fusion_root, process_video  # noqa: E402
 
@@ -67,7 +64,7 @@ def parse_args() -> argparse.Namespace:
         "--output_root",
         type=Path,
         default=REPO_ROOT / "outputs" / "stage3" / "3_roi_tube" / stamp,
-        help="MP4 / roi_tracks / result.json root.",
+        help="MP4 / motion_events / roi_tracks root.",
     )
     parser.add_argument(
         "--viz_3d_root",
@@ -75,6 +72,7 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="3D PNG root (default: outputs/stage3/3_roi_tube_3dviz/<same-stamp>).",
     )
+    parser.add_argument("--events_root", type=Path, default=None)
     parser.add_argument("--fusion", type=str, default=DEFAULT_FUSION, choices=list(FUSION_CHOICES))
     parser.add_argument("--tau_high", type=float, default=ROI_TAU_HIGH)
     parser.add_argument("--tau_low", type=float, default=ROI_TAU_LOW)
@@ -83,23 +81,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min_tube_cells", type=int, default=ROI_MIN_TUBE_CELLS)
     parser.add_argument("--min_tube_duration", type=int, default=ROI_MIN_TUBE_DURATION)
     parser.add_argument(
-        "--neigh_radius",
-        type=int,
-        default=ROI_NEIGH_RADIUS,
-        help="Chebyshev radius for event link (1 → 8-cc).",
+        "--comp_compactness_factor",
+        type=float,
+        default=COMP_COMPACTNESS_FACTOR,
     )
-    parser.add_argument(
-        "--merge_spatial_dist",
-        type=int,
-        default=ROI_MERGE_SPATIAL_DIST,
-        help="Proximity merge: max Chebyshev distance between tube cells.",
-    )
-    parser.add_argument(
-        "--merge_temporal_gap",
-        type=int,
-        default=ROI_MERGE_TEMPORAL_GAP,
-        help="Proximity merge: max frame gap between tube intervals.",
-    )
+    parser.add_argument("--comp_max_temporal_gap", type=int, default=COMP_MAX_TEMPORAL_GAP)
+    parser.add_argument("--comp_max_rois", type=int, default=COMP_MAX_ROI_PER_FRAME)
     parser.add_argument(
         "--no_suppress_contained",
         action="store_true",
@@ -111,18 +98,8 @@ def parse_args() -> argparse.Namespace:
         help="Use 16px M_* instead of 64px MU_*.",
     )
     parser.add_argument("--no_3d", action="store_true", help="Skip 3D tube figures.")
-    parser.add_argument(
-        "--heat_vmin",
-        type=float,
-        default=HEAT_VMIN,
-        help=f"Turbo heatmap floor (default {HEAT_VMIN}).",
-    )
-    parser.add_argument(
-        "--heat_vmax",
-        type=float,
-        default=HEAT_VMAX,
-        help=f"Turbo heatmap ceiling (default {HEAT_VMAX}).",
-    )
+    parser.add_argument("--heat_vmin", type=float, default=HEAT_VMIN)
+    parser.add_argument("--heat_vmax", type=float, default=HEAT_VMAX)
     parser.add_argument("--sampling_fps", type=float, default=5.0)
     parser.add_argument("--video_id", type=str, default=None)
     parser.add_argument("--video_list", type=Path, default=None)
@@ -139,8 +116,6 @@ def main() -> int:
     args = parse_args()
     if float(args.tau_low) > float(args.tau_high):
         raise SystemExit("tau_low must be ≤ tau_high")
-    if int(args.neigh_radius) < 1:
-        raise SystemExit("--neigh_radius must be ≥ 1")
 
     cfg = PipelineConfig(
         sampling_fps=float(args.sampling_fps),
@@ -183,6 +158,7 @@ def main() -> int:
                 cfg=cfg,
                 fusion_root=fusion_root,
                 output_root=output_root,
+                events_root=args.events_root.resolve() if args.events_root else None,
                 fusion=str(args.fusion),
                 prefer_unit=not bool(args.use_base_map),
                 tau_high=float(args.tau_high),
@@ -191,10 +167,10 @@ def main() -> int:
                 min_block_event=int(args.min_block_event),
                 min_tube_cells=int(args.min_tube_cells),
                 min_tube_duration=int(args.min_tube_duration),
-                neigh_radius=int(args.neigh_radius),
-                merge_spatial_dist=int(args.merge_spatial_dist),
-                merge_temporal_gap=int(args.merge_temporal_gap),
                 suppress_contained=not bool(args.no_suppress_contained),
+                comp_compactness_factor=float(args.comp_compactness_factor),
+                comp_max_temporal_gap=int(args.comp_max_temporal_gap),
+                comp_max_rois=int(args.comp_max_rois),
                 write_3d=not bool(args.no_3d),
                 viz_3d_root=None if args.no_3d else viz_3d_root,
                 heat_vmin=float(args.heat_vmin),
@@ -202,16 +178,19 @@ def main() -> int:
             )
             info["elapsed_sec"] = round(time.time() - started, 3)
             rows.append(info)
-            (output_root / video_id / "result.json").write_text(
+            (output_root / f"{video_id}_result.json").write_text(
                 json.dumps(info, indent=2) + "\n", encoding="utf-8"
             )
             logger.info(
-                "  tubes=%d block_events=%d frames=%d -> %s | 3d=%s (%.1fs)",
-                info["num_tracks"],
-                info["num_block_events"],
+                "  tubes=%d events=%d uf=%s frames=%d -> %s | 3d=%s "
+                "(pipeline %.3fs, wall %.1fs)",
+                info.get("num_tubes", 0),
+                info.get("num_events", 0),
+                info.get("num_split_components", info.get("num_graph_partitions")),
                 info["visualization_frames"],
                 info["visualization_mp4"],
                 info.get("visualization_3d"),
+                float(info.get("pipeline_sec") or 0.0),
                 info["elapsed_sec"],
             )
         except Exception as exc:  # noqa: BLE001
@@ -220,18 +199,18 @@ def main() -> int:
 
     summary = {
         "stage": 3,
-        "variant": "hysteresis_block_tube_8cc_proximity_merge",
+        "variant": "stage3_light_uf_compose",
         "params": {
             "tau_high": float(args.tau_high),
             "tau_low": float(args.tau_low),
             "max_gap": int(args.max_gap),
-            "neigh_radius": int(args.neigh_radius),
-            "merge_spatial_dist": int(args.merge_spatial_dist),
-            "merge_temporal_gap": int(args.merge_temporal_gap),
             "min_block_event": int(args.min_block_event),
             "min_tube_cells": int(args.min_tube_cells),
             "min_tube_duration": int(args.min_tube_duration),
             "suppress_contained": not bool(args.no_suppress_contained),
+            "comp_compactness_factor": float(args.comp_compactness_factor),
+            "comp_max_temporal_gap": int(args.comp_max_temporal_gap),
+            "comp_max_rois": int(args.comp_max_rois),
             "heat_vmin": float(args.heat_vmin),
             "heat_vmax": float(args.heat_vmax),
             "heat_colormap": "turbo",
@@ -244,8 +223,8 @@ def main() -> int:
         "num_videos": len(rows),
         "num_ok": sum(1 for r in rows if "error" not in r),
         "num_failed": sum(1 for r in rows if "error" in r),
-        "num_suppressed_contained": sum(
-            int(r.get("num_suppressed_contained", 0)) for r in rows if "error" not in r
+        "num_events": sum(
+            int(r.get("num_events", 0)) for r in rows if "error" not in r
         ),
         "videos": rows,
     }

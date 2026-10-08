@@ -1,0 +1,11 @@
+# 489dosa frame-sequence clips under /data/datasets/489dosa/{clip}/frames/
+clip00
+clip01
+clip02
+clip03
+clip04
+clip05
+clip06
+clip07
+clip08
+clip09

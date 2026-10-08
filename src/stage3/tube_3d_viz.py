@@ -12,7 +12,7 @@ from pathlib import Path
 
 import numpy as np
 
-from stage3.hysteresis_tube import RoiTube
+from stage3.hysteresis_tube import BlockEvent, RoiTube
 
 # Distinct tube colors (RGBA 0-1).
 _TUBE_COLORS = (
@@ -160,6 +160,87 @@ def render_tubes_3d(
     ax.invert_zaxis()  # image-like spatial y down
 
     # Stretch t (plot-Y) so it reads longer than spatial axes.
+    spatial_ref = max(tw, th)
+    ax.set_box_aspect(
+        (
+            tw / spatial_ref,
+            float(t_aspect),
+            th / spatial_ref,
+        )
+    )
+    ax.view_init(elev=18, azim=-55)
+    if title:
+        ax.set_title(title, fontsize=11, pad=8)
+    ax.xaxis.pane.set_facecolor((0.93, 0.94, 0.97, 0.6))
+    ax.yaxis.pane.set_facecolor((0.93, 0.94, 0.97, 0.6))
+    ax.zaxis.pane.set_facecolor((0.93, 0.94, 0.97, 0.6))
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=dpi, bbox_inches="tight")
+    plt.close(fig)
+    return out_path
+
+
+def render_block_events_3d(
+    events: list[BlockEvent],
+    *,
+    grid_h: int,
+    grid_w: int,
+    num_frames: int,
+    out_path: Path,
+    title: str = "",
+    dpi: int = 160,
+    t_aspect: float = _T_ASPECT,
+) -> Path:
+    """Write PNG of raw per-cell events. No ROI AABB / merge grouping."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    fig = plt.figure(figsize=(12.0, 7.2), facecolor="white")
+    ax = fig.add_subplot(111, projection="3d", computed_zorder=False)
+    ax.set_facecolor((0.96, 0.97, 0.99))
+
+    tw = float(max(grid_w, 1))
+    th = float(max(grid_h, 1))
+    tt = float(max(num_frames, 1))
+
+    _add_cuboid(
+        ax,
+        *_xy_t_to_plot(0.0, tw, 0.0, th, 0.0, tt),
+        facecolor=(0.85, 0.88, 0.95, 0.04),
+        edgecolor=(0.35, 0.40, 0.55, 0.55),
+        linewidth=1.0,
+    )
+
+    for event in events:
+        rgba = _TUBE_COLORS[(int(event.event_id) - 1) % len(_TUBE_COLORS)]
+        edge = (rgba[0] * 0.55, rgba[1] * 0.55, rgba[2] * 0.55, 0.85)
+        _add_cuboid(
+            ax,
+            *_xy_t_to_plot(
+                float(event.x),
+                float(event.x + 1),
+                float(event.y),
+                float(event.y + 1),
+                float(event.t0),
+                float(event.t1 + 1),
+            ),
+            facecolor=rgba,
+            edgecolor=edge,
+            linewidth=0.45,
+        )
+
+    ax.set_xlim(0, tw)
+    ax.set_ylim(0, tt)
+    ax.set_zlim(0, th)
+    ax.set_xlabel("x (block)")
+    ax.set_ylabel("t (frame)")
+    ax.set_zlabel("y (block)")
+    ax.invert_zaxis()
     spatial_ref = max(tw, th)
     ax.set_box_aspect(
         (

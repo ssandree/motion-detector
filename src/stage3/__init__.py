@@ -1,5 +1,18 @@
-"""Stage 3: hysteresis ROI tubes from Stage2 fused maps."""
+"""Stage 3: attractive Union-Find → AABB composition (official)."""
 
-from stage3.roi_tube import list_videos_in_fusion_root, process_video
+from __future__ import annotations
 
-__all__ = ["list_videos_in_fusion_root", "process_video"]
+from typing import Any
+
+from stage3.roi_tube import list_videos_in_fusion_root
+
+__all__ = [
+    "list_videos_in_fusion_root",
+    "process_video",
+]
+
+
+def process_video(*args: Any, **kwargs: Any):
+    from stage3.v2.light_pipeline import process_video as _process
+
+    return _process(*args, **kwargs)

@@ -1,17 +1,17 @@
-"""Stage 1: 5fps → Gap1 Farneback @1/4 → 8×8×1 R-mean → P15 → T5.
+"""Stage 1: 5fps → Gap1 Farneback @1/4 → tangent-strip → 6×6×1 R-mean → P13 → T5 → cell mag floor.
 
 Stores Gap1 base vectors/magnitudes on the 4×4 (16px) grid:
   U1 shape (T, Hb, Wb, 2)
   M1=‖U1‖ shape (T, Hb, Wb)
 
-Stage2 loads this NPZ for Gap1 and applies the same 8×8×1 → P15 → T5
-recipe to Gap 5/10/20/50 before fusion.
+Stage2 loads this NPZ and builds Gap 5/10/20/50 by integrating U1.
 """
 
 from __future__ import annotations
 
 import logging
 import math
+import time
 from pathlib import Path
 
 from motion_analyzer.opencv_cuda_bootstrap import bootstrap_opencv_cuda, reload_cv2_if_needed
@@ -25,6 +25,10 @@ import numpy as np
 from motion_analyzer.config import (
     APERTURE_ALPHA,
     APERTURE_GAMMA,
+    APERTURE_P_HARD_DILATE_PX,
+    APERTURE_P_HARD_TAU,
+    APERTURE_R_TIMES_STRENGTH,
+    APERTURE_STRIP_TANGENT,
     APERTURE_TAU_EDGE,
     BASE_MOTION_TAG,
     FARNEBACK_POLY_N,
@@ -37,11 +41,14 @@ from motion_analyzer.config import (
     PRE_AGG_MAG_THRESHOLD,
     RESIZED_BASE_BLOCK,
     STAGE1_GAPS,
-    STAGE1_P15_MIN,
+    STAGE1_P13_MIN,
     STAGE1_P15_WINDOW,
+    STAGE1_CELL_MAG_FLOOR,
     STAGE1_SPATIAL_WIN,
+    STAGE1_T5_ACTIVE_ONLY,
     STAGE1_TEMPORAL_RADIUS,
     STRUCTURE_TENSOR_SIGMA,
+    STRUCTURE_TENSOR_STRENGTH_TAU,
     VEC_KEYS,
     PipelineConfig,
 )
@@ -49,7 +56,10 @@ from motion_analyzer.farneback import (
     compute_dense_flow_original_px,
     farneback_device,
 )
-from motion_analyzer.structure_tensor import aperture_reliability_stack_for_flow
+from motion_analyzer.structure_tensor import (
+    aperture_reliability_stack_for_flow,
+    strip_along_tangent_stack,
+)
 from motion_analyzer.video_io import resolve_video_path, sample_video_frames
 
 logger = logging.getLogger("motion_map")
@@ -205,17 +215,39 @@ def directional_persistence_window(
 
 
 def temporal_mean_cell_vectors(
-    v: np.ndarray, *, temporal_radius: int = STAGE1_TEMPORAL_RADIUS
+    v: np.ndarray,
+    *,
+    temporal_radius: int = STAGE1_TEMPORAL_RADIUS,
+    active_only: bool = STAGE1_T5_ACTIVE_ONLY,
 ) -> np.ndarray:
-    """Centered temporal mean of cell vectors. Window length 2R+1 (R=2 → T5)."""
+    """Centered temporal mean. Window length 2R+1 (R=2 → T5).
+
+    Official: ``active_only=False`` averages every frame in the window,
+    including exact zeros. ``active_only=True`` skips mag==0 frames.
+    """
     stack = np.asarray(v, dtype=np.float32)
     if stack.ndim != 4 or stack.shape[-1] != 2:
         raise ValueError(f"expected (T,Hb,Wb,2), got {stack.shape}")
     t_len = stack.shape[0]
     window_len = 2 * int(temporal_radius) + 1
+    if window_len <= 1:
+        return stack
+    t0, t1 = _centered_window_bounds(t_len, window_len)
+    if bool(active_only):
+        mag = np.linalg.norm(stack, axis=-1)
+        active = mag > 0.0
+        prefix_u = _time_prefix(stack[..., 0] * active)
+        prefix_v = _time_prefix(stack[..., 1] * active)
+        prefix_n = _time_prefix(active.astype(np.float32))
+        n = prefix_n[t1] - prefix_n[t0]
+        out = np.zeros_like(stack)
+        nz = n > 0
+        n_safe = np.maximum(n, 1.0)
+        out[..., 0] = np.where(nz, (prefix_u[t1] - prefix_u[t0]) / n_safe, 0.0)
+        out[..., 1] = np.where(nz, (prefix_v[t1] - prefix_v[t0]) / n_safe, 0.0)
+        return out.astype(np.float32)
     prefix_u = _time_prefix(stack[..., 0])
     prefix_v = _time_prefix(stack[..., 1])
-    t0, t1 = _centered_window_bounds(t_len, window_len)
     n = np.maximum((t1 - t0).astype(np.float32)[:, None, None], 1.0)
     out = np.empty_like(stack)
     out[..., 0] = (prefix_u[t1] - prefix_u[t0]) / n
@@ -223,14 +255,28 @@ def temporal_mean_cell_vectors(
     return out.astype(np.float32)
 
 
+def zero_cell_vectors_below(u: np.ndarray, *, mag_floor: float) -> np.ndarray:
+    """Hard-zero cell vectors with ‖v‖ ≤ mag_floor. No-op if floor ≤ 0."""
+    vec = np.asarray(u, dtype=np.float32)
+    if vec.ndim != 4 or vec.shape[-1] != 2:
+        raise ValueError(f"expected (T,H,W,2), got {vec.shape}")
+    lo = float(mag_floor)
+    if lo <= 0:
+        return vec
+    mag = np.linalg.norm(vec, axis=-1, keepdims=True)
+    return np.where(mag > lo, vec, np.float32(0.0)).astype(np.float32)
+
+
 def apply_p15_t5(
     v1: np.ndarray,
     *,
     persist_window: int = STAGE1_P15_WINDOW,
-    p_min: float = STAGE1_P15_MIN,
+    p_min: float = STAGE1_P13_MIN,
     temporal_radius: int = STAGE1_TEMPORAL_RADIUS,
+    mag_floor: float = STAGE1_CELL_MAG_FLOOR,
+    active_only: bool = STAGE1_T5_ACTIVE_ONLY,
 ) -> dict[str, np.ndarray | int]:
-    """Official Stage1 after 8×8×1: keep if P15 ≥ τ_P, then T5."""
+    """Official Stage1 after 6×6×1: P ≥ τ_P, T5 (zeros included), then cell mag floor."""
     v1 = np.asarray(v1, dtype=np.float32)
     if v1.ndim != 4 or v1.shape[-1] != 2:
         raise ValueError(f"expected (T,Hb,Wb,2), got {v1.shape}")
@@ -239,7 +285,12 @@ def apply_p15_t5(
     gated = v1.copy()
     gated[..., 0] *= keep.astype(np.float32)
     gated[..., 1] *= keep.astype(np.float32)
-    v_t5 = temporal_mean_cell_vectors(gated, temporal_radius=int(temporal_radius))
+    v_t5 = temporal_mean_cell_vectors(
+        gated,
+        temporal_radius=int(temporal_radius),
+        active_only=bool(active_only),
+    )
+    v_t5 = zero_cell_vectors_below(v_t5, mag_floor=float(mag_floor))
     mag_t5 = np.linalg.norm(v_t5, axis=-1).astype(np.float32)
     return {
         "U": v_t5.astype(np.float32),
@@ -268,7 +319,7 @@ def spatial_r_weighted_mean_stack(
     stride: int,
     window: int,
 ) -> np.ndarray:
-    """Per-frame 8×8 R-weighted mean on the stride grid (no temporal mix)."""
+    """Per-frame spatial R-weighted mean on the stride grid (no temporal mix)."""
     stack = np.asarray(flow_stack, dtype=np.float32)
     rel = np.asarray(reliability_stack, dtype=np.float32)
     if stack.ndim != 4 or stack.shape[-1] != 2:
@@ -326,9 +377,11 @@ def _cpu_gap_8x8x1_rmean(
     tensor_sigma: float,
 ) -> np.ndarray:
     dense = _dense_flow_stack(gray, gap=int(gap), mag_threshold=float(mag_threshold))
-    rel, _ = aperture_reliability_stack_for_flow(
+    rel, diags = aperture_reliability_stack_for_flow(
         gray, dense, gap=int(gap), tensor_sigma=float(tensor_sigma)
     )
+    if bool(APERTURE_STRIP_TANGENT):
+        dense = strip_along_tangent_stack(dense, diags)
     return spatial_r_weighted_mean_stack(
         dense, rel, stride=int(block_size), window=int(spatial_win)
     )
@@ -347,7 +400,13 @@ def _meta_rows_for_gaps(
             "timestamp_sec_curr": current.timestamp_sec,
         }
         for gap in gaps:
-            previous = sampled[current_pos - int(gap)]
+            prev_pos = current_pos - int(gap)
+            if prev_pos < 0:
+                meta[f"sampled_index_prev_gap{gap}"] = -1
+                meta[f"frame_idx_prev_gap{gap}"] = -1
+                meta[f"timestamp_sec_prev_gap{gap}"] = float("nan")
+                continue
+            previous = sampled[prev_pos]
             meta[f"sampled_index_prev_gap{gap}"] = previous.sampled_index
             meta[f"frame_idx_prev_gap{gap}"] = previous.frame_idx
             meta[f"timestamp_sec_prev_gap{gap}"] = previous.timestamp_sec
@@ -366,6 +425,7 @@ def compute_stage1_gap_stacks(
     mag_threshold: float = PRE_AGG_MAG_THRESHOLD,
     tensor_sigma: float = STRUCTURE_TENSOR_SIGMA,
     use_gpu: bool = True,
+    persist_window: int = STAGE1_P15_WINDOW,
 ) -> tuple[
     dict[int, np.ndarray],
     dict[int, np.ndarray],
@@ -374,7 +434,7 @@ def compute_stage1_gap_stacks(
     bool,
     dict[int, dict],
 ]:
-    """8×8×1 R_ap-mean → P15 → T5 per gap, then slice to a common timeline.
+    """spatial_win×1 R_ap-mean → persistence → T5 per gap, then slice to a common timeline.
 
     ``u_full[0]`` for gap G corresponds to sampled index G. P15/T5 run on that
     full series before aligning to ``align_start`` (default max(gaps)).
@@ -423,7 +483,7 @@ def compute_stage1_gap_stacks(
                 )
             used_gpu = True
         except Exception as exc:  # noqa: BLE001
-            logger.warning("GPU 8×8×1 R-mean failed (%s); falling back to CPU", exc)
+            logger.warning("GPU spatial R-mean failed (%s); falling back to CPU", exc)
             u_fulls = {}
 
     if not used_gpu:
@@ -441,7 +501,9 @@ def compute_stage1_gap_stacks(
     m_stacks: dict[int, np.ndarray] = {}
     gate_by_gap: dict[int, dict] = {}
     for gap in gaps:
-        gated = apply_p15_t5(u_fulls[int(gap)])
+        gated = apply_p15_t5(
+            u_fulls[int(gap)], persist_window=int(persist_window)
+        )
         idx0 = int(start) - int(gap)
         u_stacks[int(gap)] = np.asarray(gated["U"][idx0:], dtype=np.float32)
         m_stacks[int(gap)] = np.asarray(gated["M"][idx0:], dtype=np.float32)
@@ -479,13 +541,18 @@ def compute_video_base_motion(
     temporal_radius: int = STAGE1_TEMPORAL_RADIUS,
     gaps: tuple[int, ...] = STAGE1_GAPS,
     use_gpu: bool = True,
+    persist_window: int = STAGE1_P15_WINDOW,
 ) -> dict:
-    """Stage1: Gap1 Farneback + R_ap 8×8×1, then P15 keep, then T5."""
+    """Stage1: Gap1 Farneback + tangent strip + R×strength 6×6×1, then P13, then T5."""
     gaps = tuple(int(g) for g in gaps)
     video_path = resolve_video_path(video_id, cfg.video_search_roots)
+    pipeline_t0 = time.perf_counter()
     sampled = sample_video_frames(video_path, cfg.sampling_fps, max_seconds=max_seconds)
     gray = [cv2.cvtColor(frame.bgr, cv2.COLOR_BGR2GRAY) for frame in sampled]
     frame_h, frame_w = gray[0].shape[:2]
+    persist_window = int(persist_window)
+    if persist_window < 1:
+        raise ValueError("persist_window must be >= 1")
 
     u_stacks, m_stacks, meta_rows, align_start, used_gpu, gate_by_gap = (
         compute_stage1_gap_stacks(
@@ -496,10 +563,17 @@ def compute_video_base_motion(
             block_size=int(block_size),
             spatial_win=int(spatial_win),
             use_gpu=bool(use_gpu),
+            persist_window=persist_window,
         )
     )
+    pipeline_sec = float(time.perf_counter() - pipeline_t0)
+    t5_tag = "_T5_active" if bool(STAGE1_T5_ACTIVE_ONLY) else "_T5"
+    p_tag = f"P{persist_window}"
+    win_tag = f"{int(spatial_win)}x{int(spatial_win)}x1"
     aggregation_name = (
-        "stage1_gap1_gpu_8x8x1_P15_T5" if used_gpu else "stage1_gap1_8x8x1_P15_T5"
+        f"stage1_gap1_gpu_{win_tag}_{p_tag}{t5_tag}"
+        if used_gpu
+        else f"stage1_gap1_{win_tag}_{p_tag}{t5_tag}"
     )
 
     out_dir = data_root / video_id
@@ -529,6 +603,8 @@ def compute_video_base_motion(
         farneback_use_gaussian=np.asarray(FARNEBACK_USE_GAUSSIAN, dtype=np.bool_),
         farneback_device=np.asarray(farneback_device()),
         pre_agg_mag_threshold=np.asarray(PRE_AGG_MAG_THRESHOLD, dtype=np.float32),
+        aperture_p_hard_tau=np.asarray(float(APERTURE_P_HARD_TAU), dtype=np.float32),
+        aperture_p_hard_dilate_px=np.asarray(int(APERTURE_P_HARD_DILATE_PX), dtype=np.int32),
         aggregation=np.asarray(aggregation_name),
         spatial_win=np.asarray(int(spatial_win), dtype=np.int32),
         temporal_radius=np.asarray(int(temporal_radius), dtype=np.int32),
@@ -538,10 +614,17 @@ def compute_video_base_motion(
         aperture_tau_edge=np.asarray(APERTURE_TAU_EDGE, dtype=np.float32),
         aperture_gamma=np.asarray(APERTURE_GAMMA, dtype=np.float32),
         aperture_alpha=np.asarray(APERTURE_ALPHA, dtype=np.float32),
+        aperture_r_times_strength=np.asarray(bool(APERTURE_R_TIMES_STRENGTH), dtype=np.bool_),
+        aperture_strip_tangent=np.asarray(bool(APERTURE_STRIP_TANGENT), dtype=np.bool_),
+        structure_tensor_strength_tau=np.asarray(
+            float(STRUCTURE_TENSOR_STRENGTH_TAU), dtype=np.float32
+        ),
         structure_tensor_sigma=np.asarray(float(STRUCTURE_TENSOR_SIGMA), dtype=np.float32),
         stage1_gpu=np.asarray(bool(used_gpu), dtype=np.bool_),
-        p15_min=np.asarray(float(STAGE1_P15_MIN), dtype=np.float32),
-        p15_window=np.asarray(int(STAGE1_P15_WINDOW), dtype=np.int32),
+        p13_min=np.asarray(float(STAGE1_P13_MIN), dtype=np.float32),
+        p15_window=np.asarray(int(persist_window), dtype=np.int32),
+        cell_mag_floor=np.asarray(float(STAGE1_CELL_MAG_FLOOR), dtype=np.float32),
+        t5_active_only=np.asarray(bool(STAGE1_T5_ACTIVE_ONLY), dtype=np.bool_),
         video_width=np.asarray(frame_w, dtype=np.int32),
         video_height=np.asarray(frame_h, dtype=np.int32),
         align_start_sampled_index=np.asarray(align_start, dtype=np.int32),
@@ -565,4 +648,5 @@ def compute_video_base_motion(
         "spatial_win": int(spatial_win),
         "temporal_radius": int(temporal_radius),
         "block_size": int(block_size),
+        "pipeline_sec": round(pipeline_sec, 6),
     }

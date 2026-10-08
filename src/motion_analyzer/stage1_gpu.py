@@ -1,11 +1,12 @@
-"""Stage1 GPU path: keep gray on device, Farneback + R_ap + 8×8 spatial mean.
+"""Stage1 GPU path: keep gray on device, Farneback + R_ap + spatial mean.
 
 Pipeline:
   CPU decode/gray
   → upload once + ¼ resize (GPU, kept)
   → CUDA Farneback (flow stays on GPU)
-  → CUDA Sobel R_ap on the same ¼ gray (no extra upload)
-  → v = Σ(R_ap v)/Σ(R_ap) over 8×8 via boxFilter (temporal_radius=0 for Stage1)
+  → CUDA Sobel P_ap / R_ap on the same ¼ gray (no extra upload)
+  → strip along-tangent v -= p_strip (v·t) t
+  → R = R_ap × (1-exp(-λ2/τ)); v = Σ(R v)/Σ(R) over the spatial window (default 6×6)
   → download only the 16px grid
 """
 
@@ -23,6 +24,8 @@ from motion_analyzer.config import (
     APERTURE_GAMMA,
     APERTURE_TAU_EDGE,
     INPUT_SCALE,
+    PRE_AGG_MAG_THRESHOLD,
+    STAGE1_SPATIAL_WIN,
     STRUCTURE_TENSOR_EPS,
     STRUCTURE_TENSOR_SIGMA,
 )
@@ -118,7 +121,7 @@ def _spatial_mean_grid_gpu(
     window: int,
     weight_gpu: cv2.cuda.GpuMat | None = None,
 ) -> np.ndarray:
-    """8×8 (window) mean @ stride → host (Hb,Wb,2). Dense flow never leaves GPU.
+    """window×window mean @ stride → host (Hb,Wb,2). Dense flow never leaves GPU.
 
     If ``weight_gpu`` is set, returns Σ(w v)/Σ(w) via boxFilter on (w·u, w·v, w).
     """
@@ -248,7 +251,7 @@ def _compute_gap_mean_flow_from_quarter(
     alpha: float = APERTURE_ALPHA,
     eps: float = STRUCTURE_TENSOR_EPS,
 ) -> np.ndarray:
-    """Farneback + R_ap 8×8×±R mean on already-uploaded ¼ gray."""
+    """Farneback + mag cut + tangent strip + R×strength spatial mean."""
     gap = int(gap)
     if gap < 1:
         raise ValueError("gap must be >= 1")
@@ -273,7 +276,7 @@ def _compute_gap_mean_flow_from_quarter(
         )
         weight = None
         if use_r:
-            weight = aperture_reliability_gpu(
+            weight, _p_ap, u_gpu, v_gpu = aperture_reliability_gpu(
                 gray_q[curr],
                 u_gpu,
                 v_gpu,
@@ -308,9 +311,9 @@ def compute_gap1_mean_flow_gpu(
     *,
     gap: int = 1,
     stride: int = 4,
-    window: int = 8,
+    window: int = STAGE1_SPATIAL_WIN,
     temporal_radius: int = 2,
-    mag_threshold: float = 0.6,
+    mag_threshold: float = PRE_AGG_MAG_THRESHOLD,
     input_scale: float = INPUT_SCALE,
     use_aperture_reliability: bool = True,
     tensor_sigma: float = STRUCTURE_TENSOR_SIGMA,
@@ -319,9 +322,10 @@ def compute_gap1_mean_flow_gpu(
     alpha: float = APERTURE_ALPHA,
     eps: float = STRUCTURE_TENSOR_EPS,
 ) -> np.ndarray:
-    """Gap Farneback + R_ap + 8×8×±R weighted mean → (T_flow, Hb, Wb, 2).
+    """Gap Farneback + R_ap + spatial-window×±R weighted mean → (T_flow, Hb, Wb, 2).
 
-    Default: C1 aggregation ``v = Σ(R_ap v) / Σ(R_ap)`` over 8×8×(2R+1).
+    Default: C1 aggregation ``v = Σ(R_ap v) / Σ(R_ap)`` over window×window×(2R+1).
+    Official Stage1 calls this with temporal_radius=0 then P13+T5 on CPU.
     """
     require_cuda_farneback()
     gray_q, full_h, full_w, scaled_h, scaled_w = upload_quarter_gray_sequence(
@@ -353,9 +357,9 @@ def compute_aligned_gap1_gpu(
     *,
     gap: int = 1,
     block_size: int = 4,
-    spatial_win: int = 8,
+    spatial_win: int = STAGE1_SPATIAL_WIN,
     temporal_radius: int = 2,
-    mag_threshold: float = 0.6,
+    mag_threshold: float = PRE_AGG_MAG_THRESHOLD,
     align_start: int | None = None,
     use_aperture_reliability: bool = True,
     tensor_sigma: float = STRUCTURE_TENSOR_SIGMA,
@@ -416,9 +420,9 @@ def compute_aligned_gap_stacks_gpu(
     *,
     gaps: tuple[int, ...],
     block_size: int = 4,
-    spatial_win: int = 8,
+    spatial_win: int = STAGE1_SPATIAL_WIN,
     temporal_radius: int = 2,
-    mag_threshold: float = 0.6,
+    mag_threshold: float = PRE_AGG_MAG_THRESHOLD,
     align_start: int | None = None,
     use_aperture_reliability: bool = True,
     tensor_sigma: float = STRUCTURE_TENSOR_SIGMA,
@@ -427,7 +431,7 @@ def compute_aligned_gap_stacks_gpu(
     alpha: float = APERTURE_ALPHA,
     input_scale: float = INPUT_SCALE,
 ) -> tuple[dict[int, np.ndarray], dict[int, np.ndarray], list[dict], int]:
-    """Multi-gap GPU C1: upload ¼ gray once, then R_ap-weighted 8×8×±R per gap."""
+    """Multi-gap GPU C1: upload ¼ gray once, then R_ap-weighted spatial mean per gap."""
     require_cuda_farneback()
     gaps = tuple(int(g) for g in gaps)
     if not gaps:
@@ -450,7 +454,7 @@ def compute_aligned_gap_stacks_gpu(
 
     u_stacks: dict[int, np.ndarray] = {}
     for gap in gaps:
-        logger.info("  GPU R-weighted 8×8 mean gap=%d", int(gap))
+        logger.info("  GPU R-weighted %dx%d mean gap=%d", int(spatial_win), int(spatial_win), int(gap))
         u_full = _compute_gap_mean_flow_from_quarter(
             gray_q,
             gap=int(gap),

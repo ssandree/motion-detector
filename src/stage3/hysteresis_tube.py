@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Iterable
+from typing import Any, Iterable
 
 import numpy as np
 
@@ -12,12 +12,14 @@ from motion_analyzer.config import (
     ROI_MERGE_SPATIAL_DIST,
     ROI_MERGE_TEMPORAL_GAP,
     ROI_MIN_BLOCK_EVENT,
+    ROI_MIN_BLOCK_PX,
     ROI_MIN_TUBE_CELLS,
     ROI_MIN_TUBE_DURATION,
     ROI_NEIGH_RADIUS,
     ROI_SUPPRESS_CONTAINED,
     ROI_TAU_HIGH,
     ROI_TAU_LOW,
+    UNIT_CELL_PX,
 )
 
 
@@ -64,11 +66,18 @@ class BlockEvent:
             return int(other.t0 - self.t1 - 1)
         return int(self.t0 - other.t1 - 1)
 
+    def spatial_chebyshev(self, other: "BlockEvent") -> int:
+        return int(max(abs(self.y - other.y), abs(self.x - other.x)))
+
 
 @dataclass
 class RoiTube:
     tube_id: int
     members: list[BlockEvent] = field(default_factory=list)
+    source_tube_id: int | None = None
+    place_class: str | None = None
+    expanded_bbox: tuple[int, int, int, int] | None = None
+    added_cells: list[tuple[int, int]] = field(default_factory=list)
 
     @property
     def t0(self) -> int:
@@ -101,6 +110,11 @@ class RoiTube:
         ys = [m.y for m in self.members]
         xs = [m.x for m in self.members]
         return int(min(xs)), int(min(ys)), int(max(xs)) + 1, int(max(ys)) + 1
+
+    def display_bbox(self) -> tuple[int, int, int, int]:
+        if self.expanded_bbox is not None:
+            return tuple(int(v) for v in self.expanded_bbox)
+        return self.spatial_bbox()
 
     def time_gap(self, other: "RoiTube") -> int:
         if not (self.t1 < other.t0 or other.t1 < self.t0):
@@ -222,6 +236,104 @@ def build_block_events(
     return events
 
 
+def event_to_dict(event: BlockEvent, mag: np.ndarray | None = None) -> dict:
+    """Serialize one per-cell temporal event (no 3D clustering)."""
+    per_frame: list[dict] = []
+    for t in range(int(event.t0), int(event.t1) + 1):
+        value = 0.0
+        if mag is not None and 0 <= t < mag.shape[0]:
+            raw = float(mag[t, int(event.y), int(event.x)])
+            if np.isfinite(raw):
+                value = raw
+        per_frame.append(
+            {
+                "frame_index": int(t),
+                "cells": [[int(event.y), int(event.x)]],
+                "magnitudes": [value],
+            }
+        )
+    return {
+        "event_id": int(event.event_id),
+        "start_frame": int(event.t0),
+        "end_frame": int(event.t1),
+        "duration": int(event.duration),
+        "y": int(event.y),
+        "x": int(event.x),
+        "per_frame": per_frame,
+    }
+
+
+def _same_region(
+    a: BlockEvent,
+    b: BlockEvent,
+    region_id_grid: np.ndarray | None,
+) -> bool:
+    if region_id_grid is None:
+        return True
+    grid = np.asarray(region_id_grid)
+    gh, gw = grid.shape
+
+    def _at(y: int, x: int) -> int:
+        if 0 <= int(y) < gh and 0 <= int(x) < gw:
+            return int(grid[int(y), int(x)])
+        return -(int(y) * 10_000 + int(x) + 1)
+
+    return _at(a.y, a.x) == _at(b.y, b.x)
+
+
+def cluster_block_events(
+    events: list[BlockEvent],
+    *,
+    spatial_dist: int = ROI_MERGE_SPATIAL_DIST,
+    temporal_gap: int = ROI_MERGE_TEMPORAL_GAP,
+    min_tube_cells: int = ROI_MIN_TUBE_CELLS,
+    min_tube_duration: int = ROI_MIN_TUBE_DURATION,
+    region_id_grid: np.ndarray | None = None,
+) -> list[RoiTube]:
+    """Cluster per-block event tubes into ROI tubes.
+
+    Two events are linked if both hold:
+      [spatial]  Chebyshev distance ≤ ``spatial_dist`` (same-frame when they overlap)
+      [temporal] frame gap between intervals ≤ ``temporal_gap``
+    When ``region_id_grid`` is set, they must also share the same cell region id.
+    """
+    if not events:
+        return []
+
+    uf = _UnionFind()
+    for ev in events:
+        uf.add(ev.event_id)
+
+    dist = int(spatial_dist)
+    gap_lim = int(temporal_gap)
+    region = None if region_id_grid is None else np.asarray(region_id_grid)
+    for i, a in enumerate(events):
+        for b in events[i + 1 :]:
+            if a.spatial_chebyshev(b) > dist or a.time_gap(b) > gap_lim:
+                continue
+            if not _same_region(a, b, region):
+                continue
+            uf.union(a.event_id, b.event_id)
+
+    groups: dict[int, list[BlockEvent]] = {}
+    for ev in events:
+        groups.setdefault(uf.find(ev.event_id), []).append(ev)
+
+    tubes: list[RoiTube] = []
+    next_id = 1
+    for members in groups.values():
+        tube = RoiTube(
+            tube_id=next_id,
+            members=sorted(members, key=lambda m: (m.t0, m.y, m.x)),
+        )
+        if tube.num_cells >= int(min_tube_cells) and tube.duration >= int(
+            min_tube_duration
+        ):
+            tubes.append(tube)
+            next_id += 1
+    return _finalize_tubes(tubes)
+
+
 def merge_block_events(
     events: list[BlockEvent],
     *,
@@ -327,6 +439,32 @@ def _finalize_tubes(tubes: list[RoiTube]) -> list[RoiTube]:
     return tubes
 
 
+def finalize_tubes(tubes: list[RoiTube]) -> list[RoiTube]:
+    return _finalize_tubes(tubes)
+
+
+def tube_from_events(members: list[BlockEvent], *, tube_id: int) -> RoiTube:
+    return RoiTube(
+        tube_id=int(tube_id),
+        members=sorted(members, key=lambda m: (m.t0, m.y, m.x, m.event_id)),
+    )
+
+
+def tube_area_cost(tube: RoiTube) -> float:
+    """Lifetime AABB area × duration (Stage3 crop representation)."""
+    x0, y0, x1, y1 = tube.spatial_bbox()
+    area = max(0, int(x1) - int(x0)) * max(0, int(y1) - int(y0))
+    return float(area * int(tube.duration))
+
+
+def frame_indices_from_meta(meta: dict, n_frames: int) -> list[int]:
+    align_start = int(meta.get("align_start_sampled_index") or 0)
+    curr = meta.get("sampled_index_curr")
+    if curr is not None:
+        return [int(i) for i in curr.tolist()]
+    return list(range(align_start, align_start + int(n_frames)))
+
+
 def tube_fully_contained(inner: RoiTube, outer: RoiTube) -> bool:
     """True if inner's time span and spatial bbox are strictly inside outer."""
     if inner.tube_id == outer.tube_id:
@@ -346,6 +484,154 @@ def tube_fully_contained(inner: RoiTube, outer: RoiTube) -> bool:
         ox1,
         oy1,
     )
+
+
+def cell_clipped_pixel_wh(
+    y: int,
+    x: int,
+    *,
+    cell_px: int,
+    frame_width: int,
+    frame_height: int,
+) -> tuple[int, int]:
+    """Pixel size of one unit grid cell after clipping to the video frame."""
+    px0 = int(x) * int(cell_px)
+    py0 = int(y) * int(cell_px)
+    px1 = min(int(frame_width), px0 + int(cell_px))
+    py1 = min(int(frame_height), py0 + int(cell_px))
+    return max(0, px1 - px0), max(0, py1 - py0)
+
+
+def event_covers_full_block(
+    event: BlockEvent,
+    *,
+    cell_px: int,
+    frame_width: int,
+    frame_height: int,
+) -> bool:
+    """True if this block event sits on a full cell_px×cell_px region in-frame."""
+    width, height = cell_clipped_pixel_wh(
+        int(event.y),
+        int(event.x),
+        cell_px=int(cell_px),
+        frame_width=int(frame_width),
+        frame_height=int(frame_height),
+    )
+    return width >= int(cell_px) and height >= int(cell_px)
+
+
+def filter_partial_block_events(
+    events: list[BlockEvent],
+    *,
+    cell_px: int,
+    frame_width: int,
+    frame_height: int,
+    neighbor_chebyshev: int = 1,
+) -> tuple[list[BlockEvent], list[int]]:
+    """Drop orphan partial edge/corner cells; keep partials next to full motion.
+
+    A partial (< cell_px×cell_px in-frame) event is kept when some full-block
+    event lies within ``neighbor_chebyshev`` and overlaps in time. Orphan
+    partials with no such neighbor are dropped so they never form standalone
+    ROIs, while edge strips adjacent to real motion stay attached.
+    """
+    if not events or int(frame_width) <= 0 or int(frame_height) <= 0:
+        return list(events), []
+
+    full: list[BlockEvent] = []
+    partial: list[BlockEvent] = []
+    for event in events:
+        if event_covers_full_block(
+            event,
+            cell_px=int(cell_px),
+            frame_width=int(frame_width),
+            frame_height=int(frame_height),
+        ):
+            full.append(event)
+        else:
+            partial.append(event)
+
+    if not partial:
+        return list(events), []
+
+    neigh = int(neighbor_chebyshev)
+    kept_partial: list[BlockEvent] = []
+    dropped: list[int] = []
+    for event in partial:
+        ey, ex = int(event.y), int(event.x)
+        attached = False
+        for other in full:
+            if max(abs(ey - int(other.y)), abs(ex - int(other.x))) > neigh:
+                continue
+            if event.overlaps_time(other) or event.time_gap(other) <= 0:
+                attached = True
+                break
+        if attached:
+            kept_partial.append(event)
+        else:
+            dropped.append(int(event.event_id))
+
+    kept = full + kept_partial
+    kept.sort(key=lambda e: (int(e.t0), int(e.y), int(e.x), int(e.event_id)))
+    return kept, sorted(dropped)
+
+
+def clipped_pixel_wh(
+    tube: RoiTube,
+    *,
+    cell_px: int,
+    frame_width: int,
+    frame_height: int,
+) -> tuple[int, int]:
+    """Pixel size of the tube bbox after clipping to the video frame."""
+    x0, y0, x1, y1 = tube.spatial_bbox()
+    px0 = int(x0) * int(cell_px)
+    py0 = int(y0) * int(cell_px)
+    px1 = min(int(frame_width), int(x1) * int(cell_px))
+    py1 = min(int(frame_height), int(y1) * int(cell_px))
+    return max(0, px1 - px0), max(0, py1 - py0)
+
+
+def tube_covers_full_block(
+    tube: RoiTube,
+    *,
+    cell_px: int,
+    frame_width: int,
+    frame_height: int,
+) -> bool:
+    """True if the clipped bbox can contain at least one full unit block."""
+    width, height = clipped_pixel_wh(
+        tube,
+        cell_px=cell_px,
+        frame_width=frame_width,
+        frame_height=frame_height,
+    )
+    return width >= int(cell_px) and height >= int(cell_px)
+
+
+def drop_sub_block_tubes(
+    tubes: list[RoiTube],
+    *,
+    cell_px: int,
+    frame_width: int,
+    frame_height: int,
+) -> tuple[list[RoiTube], list[int]]:
+    """Remove tubes whose clipped pixel bbox is smaller than one unit block."""
+    if not tubes or int(frame_width) <= 0 or int(frame_height) <= 0:
+        return _finalize_tubes(tubes), []
+    removed: list[int] = []
+    kept: list[RoiTube] = []
+    for tube in tubes:
+        if tube_covers_full_block(
+            tube,
+            cell_px=cell_px,
+            frame_width=frame_width,
+            frame_height=frame_height,
+        ):
+            kept.append(tube)
+        else:
+            removed.append(tube.tube_id)
+    return _finalize_tubes(kept), sorted(removed)
 
 
 def suppress_contained_tubes(tubes: list[RoiTube]) -> tuple[list[RoiTube], list[int]]:
@@ -375,7 +661,12 @@ def build_roi_tubes(
     min_tube_cells: int = ROI_MIN_TUBE_CELLS,
     min_tube_duration: int = ROI_MIN_TUBE_DURATION,
     suppress_contained: bool = ROI_SUPPRESS_CONTAINED,
-) -> tuple[list[BlockEvent], list[RoiTube], list[int]]:
+    min_block_px: bool = ROI_MIN_BLOCK_PX,
+    cell_px: int = UNIT_CELL_PX,
+    frame_width: int = 0,
+    frame_height: int = 0,
+    region_id_grid: np.ndarray | None = None,
+) -> tuple[list[BlockEvent], list[RoiTube], list[int], list[int]]:
     events = build_block_events(
         mag,
         tau_high=tau_high,
@@ -383,29 +674,28 @@ def build_roi_tubes(
         max_gap=max_gap,
         min_block_event=min_block_event,
     )
-    tubes = merge_block_events(
+    tubes = cluster_block_events(
         events,
-        neigh_radius=neigh_radius,
+        spatial_dist=int(merge_spatial_dist),
+        temporal_gap=int(merge_temporal_gap),
         min_tube_cells=min_tube_cells,
         min_tube_duration=min_tube_duration,
+        region_id_grid=region_id_grid,
     )
-    tubes = proximity_merge_tubes(
-        tubes,
-        spatial_dist=merge_spatial_dist,
-        temporal_gap=merge_temporal_gap,
-    )
-    # Re-apply size filter after proximity merge (merged tubes may still be tiny).
-    tubes = [
-        t
-        for t in tubes
-        if t.num_cells >= int(min_tube_cells)
-        and t.duration >= int(min_tube_duration)
-    ]
-    tubes = _finalize_tubes(tubes)
-    removed: list[int] = []
+    # neigh_radius is kept for CLI/output tags; clustering uses merge_spatial_dist.
+    _ = neigh_radius
+    dropped_sub: list[int] = []
+    contained: list[int] = []
+    if min_block_px:
+        tubes, dropped_sub = drop_sub_block_tubes(
+            tubes,
+            cell_px=int(cell_px),
+            frame_width=int(frame_width),
+            frame_height=int(frame_height),
+        )
     if suppress_contained:
-        tubes, removed = suppress_contained_tubes(tubes)
-    return events, tubes, removed
+        tubes, contained = suppress_contained_tubes(tubes)
+    return events, tubes, dropped_sub, contained
 
 
 def tubes_to_frame_overlays(
@@ -418,7 +708,7 @@ def tubes_to_frame_overlays(
         int, list[tuple[int, tuple[int, int, int, int], list[tuple[int, int]]]]
     ] = {t: [] for t in range(int(num_frames))}
     for tube in tubes:
-        fixed = tube.spatial_bbox()
+        fixed = tube.display_bbox()
         for t in range(tube.t0, tube.t1 + 1):
             cells = tube.cells_at(t)
             # Show fixed tube bbox for the whole lifetime; cells may be empty in gaps.
@@ -456,3 +746,131 @@ def tube_to_dict(tube: RoiTube) -> dict:
             for t in range(tube.t0, tube.t1 + 1)
         ],
     }
+
+
+def _tube_st_aabb(tube: RoiTube) -> tuple[int, int, int, int, int, int]:
+    x0, y0, x1, y1 = tube.spatial_bbox()
+    return (
+        int(x0),
+        int(y0),
+        int(x1),
+        int(y1),
+        int(tube.t0),
+        int(tube.t1) + 1,
+    )
+
+
+def _tube_st_iou(a: RoiTube, b: RoiTube) -> float:
+    ax0, ay0, ax1, ay1, at0, at1 = _tube_st_aabb(a)
+    bx0, by0, bx1, by1, bt0, bt1 = _tube_st_aabb(b)
+    ix0, iy0 = max(ax0, bx0), max(ay0, by0)
+    ix1, iy1 = min(ax1, bx1), min(ay1, by1)
+    it0, it1 = max(at0, bt0), min(at1, bt1)
+    if ix1 <= ix0 or iy1 <= iy0 or it1 <= it0:
+        return 0.0
+    inter = float((ix1 - ix0) * (iy1 - iy0) * (it1 - it0))
+    va = float(max(0, ax1 - ax0) * max(0, ay1 - ay0) * max(0, at1 - at0))
+    vb = float(max(0, bx1 - bx0) * max(0, by1 - by0) * max(0, bt1 - bt0))
+    union = va + vb - inter
+    if union <= 0:
+        return 0.0
+    return float(inter / union)
+
+
+def suppress_high_iou_tubes(
+    tubes: list[RoiTube],
+    *,
+    iou_tau: float = 0.4,
+) -> tuple[list[RoiTube], dict[str, Any]]:
+    tau = float(iou_tau)
+    ordered = sorted(
+        tubes,
+        key=lambda t: (
+            float(tube_area_cost(t)),
+            int(t.num_cells),
+            int(t.duration),
+            -int(t.tube_id),
+        ),
+        reverse=True,
+    )
+    kept: list[RoiTube] = []
+    suppressed: list[dict[str, Any]] = []
+    for cand in ordered:
+        hit = None
+        best_iou = 0.0
+        for k in kept:
+            iou = _tube_st_iou(cand, k)
+            if iou >= tau and iou >= best_iou:
+                hit = k
+                best_iou = iou
+        if hit is None:
+            kept.append(cand)
+        else:
+            suppressed.append(
+                {
+                    "dropped_tube_id": int(cand.tube_id),
+                    "kept_tube_id": int(hit.tube_id),
+                    "iou": round(float(best_iou), 6),
+                    "dropped_cost": float(tube_area_cost(cand)),
+                    "kept_cost": float(tube_area_cost(hit)),
+                    "dropped_n_cells": int(cand.num_cells),
+                    "kept_n_cells": int(hit.num_cells),
+                }
+            )
+    kept = finalize_tubes(kept)
+    return kept, {
+        "iou_tau": tau,
+        "num_before": len(tubes),
+        "num_after": len(kept),
+        "num_suppressed": len(suppressed),
+        "suppressed_pairs": suppressed,
+    }
+
+
+def apply_stage3_roi_filters(
+    tubes: list[RoiTube],
+    *,
+    params: dict[str, Any],
+    cell_px: int,
+    frame_width: int,
+    frame_height: int,
+    iou_nms_tau: float | None = None,
+) -> tuple[list[RoiTube], dict[str, Any]]:
+    min_cells = int(params.get("min_tube_cells", ROI_MIN_TUBE_CELLS))
+    min_dur = int(params.get("min_tube_duration", ROI_MIN_TUBE_DURATION))
+    before = len(tubes)
+    dropped_small = [
+        int(t.tube_id)
+        for t in tubes
+        if t.num_cells < min_cells or t.duration < min_dur
+    ]
+    kept = [
+        t
+        for t in tubes
+        if t.num_cells >= min_cells and t.duration >= min_dur
+    ]
+    dropped_sub: list[int] = []
+    contained: list[int] = []
+    if bool(params.get("min_block_px", ROI_MIN_BLOCK_PX)):
+        kept, dropped_sub = drop_sub_block_tubes(
+            kept,
+            cell_px=int(cell_px),
+            frame_width=int(frame_width),
+            frame_height=int(frame_height),
+        )
+    if bool(params.get("suppress_contained", ROI_SUPPRESS_CONTAINED)):
+        kept, contained = suppress_contained_tubes(kept)
+    iou_log: dict[str, Any] | None = None
+    if iou_nms_tau is not None and float(iou_nms_tau) > 0:
+        kept, iou_log = suppress_high_iou_tubes(kept, iou_tau=float(iou_nms_tau))
+    kept = finalize_tubes(kept)
+    out: dict[str, Any] = {
+        "num_before_filter": before,
+        "num_after_filter": len(kept),
+        "dropped_small_tube_ids": dropped_small,
+        "dropped_sub_block_tube_ids": dropped_sub,
+        "suppressed_contained_tube_ids": contained,
+    }
+    if iou_log is not None:
+        out["iou_nms"] = iou_log
+    return kept, out
